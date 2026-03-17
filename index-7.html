@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Germany University Guide — Scratchtotopnotch</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root{--bg:#0c0c0c;--surface:#141414;--surface2:#1e1e1e;--gold:#c9a84c;--gold-light:#e8c97a;--gold-dim:rgba(201,168,76,0.12);--border:rgba(255,255,255,0.07);--text:#d4d0c8;--muted:#636059;--green:#5cba8a;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+
+  body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:24px 16px;}
+  body::before{content:'';position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse 60% 40% at 80% 10%,rgba(201,168,76,0.05) 0%,transparent 60%);}
+
+  .header{text-align:center;margin-bottom:24px;}
+  .logo{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:#f0ede6;letter-spacing:-0.5px;}
+  .logo span{color:var(--gold);}
+  .tagline{font-size:12px;color:var(--muted);margin-top:4px;}
+
+  .chat{width:100%;max-width:680px;background:var(--surface);border:1px solid var(--border);border-radius:20px;overflow:hidden;position:relative;z-index:1;}
+
+  .progress-bar{height:3px;background:var(--border);}
+  .progress-fill{height:100%;background:var(--gold);transition:width 0.5s ease;}
+
+  .step-indicator{padding:10px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+  .step-label{font-size:12px;color:var(--muted);}
+  .step-label span{color:var(--gold);}
+  .step-dots{display:flex;gap:5px;}
+  .dot{width:6px;height:6px;border-radius:50%;background:var(--border);transition:background 0.3s;}
+  .dot.active{background:var(--gold);}
+  .dot.done{background:var(--green);}
+
+  #messages{height:440px;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:14px;}
+  #messages::-webkit-scrollbar{width:4px;}
+  #messages::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+
+  .msg{display:flex;gap:10px;align-items:flex-start;animation:up 0.3s ease;}
+  .msg.user{flex-direction:row-reverse;}
+  @keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  .av{width:32px;height:32px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;}
+  .av.bot{background:var(--gold);color:#0c0c0c;font-family:'Syne',sans-serif;}
+  .av.usr{background:var(--surface2);border:1px solid var(--border);}
+  .bubble{max-width:82%;padding:12px 15px;border-radius:14px;font-size:14px;line-height:1.75;}
+  .bubble.bot{background:var(--surface2);border:1px solid var(--border);border-top-left-radius:4px;}
+  .bubble.user{background:var(--gold);color:#0c0c0c;font-weight:500;border-top-right-radius:4px;}
+  .bubble strong{color:var(--gold-light);}
+  .bubble.bot strong{color:var(--gold-light);}
+  .bubble ul{margin-left:18px;margin-top:8px;}
+  .bubble li{margin-bottom:5px;}
+
+  .disclaimer{margin-top:12px;padding:10px 12px;background:rgba(201,168,76,0.1);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;font-size:13px;font-weight:700;color:var(--gold-light);line-height:1.6;}
+
+  .dots{display:flex;gap:4px;align-items:center;padding:3px 0;}
+  .dots span{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:bounce 1.1s infinite;}
+  .dots span:nth-child(2){animation-delay:.18s}
+  .dots span:nth-child(3){animation-delay:.36s}
+  @keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+
+  .btns-area{padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap;}
+  .opt-btn{background:transparent;border:1px solid var(--border);border-radius:10px;padding:9px 14px;color:var(--text);font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;text-align:left;}
+  .opt-btn:hover{border-color:var(--gold);color:var(--gold);background:var(--gold-dim);}
+  .opt-btn.primary{background:var(--gold);color:#0c0c0c;font-weight:600;border-color:var(--gold);}
+  .opt-btn.primary:hover{background:var(--gold-light);}
+  .opt-btn.form-btn{background:var(--green);color:#0c0c0c;font-weight:600;border-color:var(--green);}
+  .opt-btn.form-btn:hover{opacity:0.85;}
+
+  .input-bar{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--border);}
+  #inp{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;resize:none;transition:border-color 0.2s;}
+  #inp:focus{border-color:var(--gold);}
+  #inp::placeholder{color:var(--muted);}
+  #send-btn{background:var(--gold);border:none;border-radius:10px;width:42px;height:42px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:opacity 0.2s;}
+  #send-btn:hover{opacity:0.85;}
+  #send-btn svg{width:16px;height:16px;fill:#0c0c0c;}
+
+  .hidden{display:none;}
+
+  .roadmap-section{width:100%;max-width:680px;margin-top:16px;background:#141414;border:1px solid #c9a84c;border-radius:20px;overflow:hidden;display:none;}
+  .roadmap-section.show{display:block;}
+  .roadmap-top{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid rgba(255,255,255,0.07);}
+  .roadmap-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:#e8c97a;}
+  .roadmap-close{background:#1e1e1e;border:1px solid rgba(255,255,255,0.07);color:#d4d0c8;border-radius:8px;width:28px;height:28px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;}
+  .roadmap-close:hover{border-color:#c9a84c;color:#c9a84c;}
+  .roadmap-inner{padding:16px 20px;}
+
+  .deadline-section{width:100%;max-width:680px;margin-top:16px;background:#141414;border:1px solid var(--border);border-radius:20px;overflow:hidden;display:none;}
+  .deadline-section.show{display:block;}
+  .deadline-top{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);}
+  .deadline-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--gold-light);}
+  .deadline-close{background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:8px;width:28px;height:28px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;}
+  .deadline-close:hover{border-color:var(--gold);color:var(--gold);}
+  .deadline-inner{padding:20px;}
+  .deadline-tabs{display:flex;gap:8px;margin-bottom:20px;}
+  .dtab{flex:1;background:transparent;border:1px solid var(--border);border-radius:10px;padding:10px;color:var(--muted);font-size:14px;font-weight:600;cursor:pointer;font-family:'Syne',sans-serif;transition:all 0.2s;}
+  .dtab.active{background:var(--gold-dim);border-color:var(--gold);color:var(--gold);}
+  .deadline-table{width:100%;border-collapse:collapse;font-size:13px;}
+  .deadline-table th{padding:10px 12px;text-align:left;color:var(--gold-light);font-weight:600;border-bottom:1px solid var(--border);font-family:'Syne',sans-serif;}
+  .deadline-table td{padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text);line-height:1.5;}
+  .deadline-table tr:last-child td{border-bottom:none;}
+  .deadline-table tr:hover td{background:rgba(201,168,76,0.05);}
+  .badge{display:inline-block;padding:2px 8px;border-radius:100px;font-size:11px;font-weight:600;}
+  .badge.uni{background:rgba(201,168,76,0.15);color:var(--gold);}
+  .badge.direct{background:rgba(92,186,138,0.15);color:var(--green);}
+  .deadline-note{margin-top:14px;font-size:12px;font-weight:700;color:var(--gold-light);padding:10px 12px;background:rgba(201,168,76,0.08);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;}
+
+  @media(max-width:480px){
+    body{padding:12px 10px;}
+    .logo{font-size:20px;}
+    #messages{height:360px;padding:14px;}
+    .bubble{font-size:13px;padding:10px 12px;max-width:90%;}
+    .opt-btn{font-size:12px;padding:8px 11px;}
+    .btns-area{padding:10px 12px;gap:6px;}
+    .step-indicator{padding:8px 14px;}
+    .input-bar{padding:10px 12px;}
+    .deadline-table{font-size:12px;}
+    .deadline-table th,.deadline-table td{padding:8px 8px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">Scratch<span>ToTopNotch</span></div>
+  <div class="tagline">Germany University Application Guide · For Indian Students</div>
+</div>
+
+<div class="roadmap-section" id="roadmap-section">
+  <div class="roadmap-top">
+    <div class="roadmap-title">🗺️ Your application roadmap</div>
+    <button class="roadmap-close" onclick="document.getElementById('roadmap-section').classList.remove('show')">✕</button>
+  </div>
+  <div class="roadmap-inner">
+    <svg width="100%" viewBox="0 0 460 630" xmlns="http://www.w3.org/2000/svg">
+      <defs><marker id="ra" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+      <rect x="130" y="10" width="200" height="44" rx="8" fill="#0d3326" stroke="#0F6E56" stroke-width="0.8"/>
+      <text x="230" y="27" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="600" fill="#9FE1CB" font-family="sans-serif">Choose degree</text>
+      <text x="230" y="44" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#5DCAA5" font-family="sans-serif">Bachelor's or Master's</text>
+      <line x1="230" y1="54" x2="230" y2="70" stroke="#636059" stroke-width="0.5"/>
+      <path d="M230 70 L100 70" fill="none" stroke="#636059" stroke-width="0.5"/>
+      <path d="M230 70 L360 70" fill="none" stroke="#636059" stroke-width="0.5"/>
+      <line x1="100" y1="70" x2="100" y2="84" stroke="#636059" stroke-width="0.5" marker-end="url(#ra)"/>
+      <line x1="360" y1="70" x2="360" y2="84" stroke="#636059" stroke-width="0.5" marker-end="url(#ra)"/>
+      <text x="230" y="79" text-anchor="middle" font-size="9" fill="#636059" font-family="sans-serif">do both at the same time</text>
+      <text x="100" y="93" text-anchor="middle" font-size="10" font-weight="700" fill="#5DCAA5" font-family="sans-serif">APS track</text>
+      <rect x="20" y="100" width="160" height="38" rx="8" fill="#0d3326" stroke="#0F6E56" stroke-width="0.8"/>
+      <text x="100" y="113" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="#9FE1CB" font-family="sans-serif">Apply for APS</text>
+      <text x="100" y="129" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#5DCAA5" font-family="sans-serif">New Delhi · ~₹18,000</text>
+      <line x1="100" y1="138" x2="100" y2="154" stroke="#0F6E56" stroke-width="0.5" marker-end="url(#ra)"/>
+      <rect x="20" y="154" width="160" height="38" rx="8" fill="#0d3326" stroke="#0F6E56" stroke-width="0.8"/>
+      <text x="100" y="167" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="#9FE1CB" font-family="sans-serif">Wait 4–6 weeks</text>
+      <text x="100" y="183" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#5DCAA5" font-family="sans-serif">Processing time</text>
+      <line x1="100" y1="192" x2="100" y2="208" stroke="#0F6E56" stroke-width="0.5" marker-end="url(#ra)"/>
+      <rect x="20" y="208" width="160" height="38" rx="8" fill="#0d3326" stroke="#0F6E56" stroke-width="0.8"/>
+      <text x="100" y="221" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="#9FE1CB" font-family="sans-serif">Get APS certificate</text>
+      <text x="100" y="237" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#5DCAA5" font-family="sans-serif">Required for uni-assist</text>
+      <text x="360" y="93" text-anchor="middle" font-size="10" font-weight="700" fill="#AFA9EC" font-family="sans-serif">Language track</text>
+      <rect x="280" y="100" width="160" height="38" rx="8" fill="#1a1535" stroke="#534AB7" stroke-width="0.8"/>
+      <text x="360" y="113" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="#CECBF6" font-family="sans-serif">Pick your exam</text>
+      <text x="360" y="129" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#AFA9EC" font-family="sans-serif">IELTS · TOEFL · TestDaF</text>
+      <line x1="360" y1="138" x2="360" y2="154" stroke="#534AB7" stroke-width="0.5" marker-end="url(#ra)"/>
+      <rect x="280" y="154" width="160" height="38" rx="8" fill="#1a1535" stroke="#534AB7" stroke-width="0.8"/>
+      <text x="360" y="167" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="#CECBF6" font-family="sans-serif">Prepare 3–9 months</text>
+      <text x="360" y="183" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#AFA9EC" font-family="sans-serif">Mock tests + practice</text>
+      <line x1="360" y1="192" x2="360" y2="208" stroke="#534AB7" stroke-width="0.5" marker-end="url(#ra)"/>
+      <rect x="280" y="208" width="160" height="38" rx="8" fill="#1a1535" stroke="#534AB7" stroke-width="0.8"/>
+      <text x="360" y="221" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="#CECBF6" font-family="sans-serif">Score achieved</text>
+      <text x="360" y="237" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#AFA9EC" font-family="sans-serif">IELTS 6.5+ or TDN 4</text>
+      <path d="M100 246 L100 268 L228 268" fill="none" stroke="#636059" stroke-width="0.5" marker-end="url(#ra)"/>
+      <path d="M360 246 L360 268 L232 268" fill="none" stroke="#636059" stroke-width="0.5"/>
+      <rect x="130" y="274" width="200" height="38" rx="8" fill="#2a1e06" stroke="#854F0B" stroke-width="0.8"/>
+      <text x="230" y="287" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="#FAC775" font-family="sans-serif">Uni-assist account</text>
+      <text x="230" y="303" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#EF9F27" font-family="sans-serif">Upload APS + documents</text>
+      <line x1="230" y1="312" x2="230" y2="328" stroke="#854F0B" stroke-width="0.5" marker-end="url(#ra)"/>
+      <rect x="130" y="328" width="200" height="38" rx="8" fill="#2a1e06" stroke="#854F0B" stroke-width="0.8"/>
+      <text x="230" y="341" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="#FAC775" font-family="sans-serif">University shortlisting</text>
+      <text x="230" y="357" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#EF9F27" font-family="sans-serif">DAAD · 5–7 universities</text>
+      <line x1="230" y1="366" x2="230" y2="382" stroke="#854F0B" stroke-width="0.5" marker-end="url(#ra)"/>
+      <rect x="130" y="382" width="200" height="38" rx="8" fill="#2a1e06" stroke="#854F0B" stroke-width="0.8"/>
+      <text x="230" y="395" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="#FAC775" font-family="sans-serif">Document uploads</text>
+      <text x="230" y="411" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#EF9F27" font-family="sans-serif">SOP · LOR · transcripts</text>
+      <line x1="230" y1="420" x2="230" y2="436" stroke="#854F0B" stroke-width="0.5" marker-end="url(#ra)"/>
+      <rect x="130" y="436" width="200" height="38" rx="8" fill="#2a1e06" stroke="#854F0B" stroke-width="0.8"/>
+      <text x="230" y="449" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="#FAC775" font-family="sans-serif">Track deadlines</text>
+      <text x="230" y="465" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#EF9F27" font-family="sans-serif">Winter: May–Jul · Summer: Nov–Jan</text>
+      <line x1="230" y1="474" x2="230" y2="490" stroke="#854F0B" stroke-width="0.5" marker-end="url(#ra)"/>
+      <rect x="130" y="490" width="200" height="38" rx="8" fill="#2a1206" stroke="#993C1D" stroke-width="0.8"/>
+      <text x="230" y="503" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="#F5C4B3" font-family="sans-serif">Visa preparation</text>
+      <text x="230" y="519" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#F0997B" font-family="sans-serif">Blocked account · embassy</text>
+      <line x1="230" y1="528" x2="230" y2="544" stroke="#993C1D" stroke-width="0.5" marker-end="url(#ra)"/>
+      <rect x="130" y="544" width="200" height="44" rx="8" fill="#0d3326" stroke="#0F6E56" stroke-width="0.8"/>
+      <text x="230" y="560" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="600" fill="#9FE1CB" font-family="sans-serif">Arrive in Germany 🎉</text>
+      <text x="230" y="578" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#5DCAA5" font-family="sans-serif">You made it!</text>
+      <text x="230" y="614" text-anchor="middle" font-size="10" fill="#636059" font-family="sans-serif">Total timeline: 12–18 months · Start early!</text>
+    </svg>
+  </div>
+</div>
+
+<div class="deadline-section" id="deadline-section">
+  <div class="deadline-top">
+    <div class="deadline-title">📅 Deadline Calculator</div>
+    <button class="deadline-close" onclick="document.getElementById('deadline-section').classList.remove('show')">✕</button>
+  </div>
+  <div class="deadline-inner">
+    <div class="deadline-tabs">
+      <button class="dtab active" onclick="switchTab('winter',this)">🍂 Winter Semester</button>
+      <button class="dtab" onclick="switchTab('summer',this)">🌸 Summer Semester</button>
+    </div>
+    <div id="tab-winter">
+      <table class="deadline-table">
+        <tr><th>What to do</th><th>Apply by / deadline</th><th>Portal</th></tr>
+        <tr><td>Start APS application</td><td>January – February</td><td>—</td></tr>
+        <tr><td>Give language exam (IELTS/TestDaF)</td><td>By March</td><td>—</td></tr>
+        <tr><td>Shortlist universities</td><td>February – March</td><td>—</td></tr>
+        <tr><td>Submit uni-assist application</td><td>May – July <strong>(most unis)</strong></td><td><span class="badge uni">uni-assist</span></td></tr>
+        <tr><td>Submit direct applications</td><td>May – July <strong>(varies)</strong></td><td><span class="badge direct">direct</span></td></tr>
+        <tr><td>Receive admission decisions</td><td>August – September</td><td>—</td></tr>
+        <tr><td>Open blocked account + get insurance</td><td>August – September</td><td>—</td></tr>
+        <tr><td>Apply for student visa</td><td>August – September</td><td>—</td></tr>
+        <tr><td>Winter semester begins</td><td><strong>October</strong></td><td>—</td></tr>
+      </table>
+    </div>
+    <div id="tab-summer" style="display:none">
+      <table class="deadline-table">
+        <tr><th>What to do</th><th>Apply by / deadline</th><th>Portal</th></tr>
+        <tr><td>Start APS application</td><td>July – August</td><td>—</td></tr>
+        <tr><td>Give language exam (IELTS/TestDaF)</td><td>By September</td><td>—</td></tr>
+        <tr><td>Shortlist universities</td><td>August – September</td><td>—</td></tr>
+        <tr><td>Submit uni-assist application</td><td>November – January <strong>(most unis)</strong></td><td><span class="badge uni">uni-assist</span></td></tr>
+        <tr><td>Submit direct applications</td><td>November – January <strong>(varies)</strong></td><td><span class="badge direct">direct</span></td></tr>
+        <tr><td>Receive admission decisions</td><td>February – March</td><td>—</td></tr>
+        <tr><td>Open blocked account + get insurance</td><td>February – March</td><td>—</td></tr>
+        <tr><td>Apply for student visa</td><td>February – March</td><td>—</td></tr>
+        <tr><td>Summer semester begins</td><td><strong>April</strong></td><td>—</td></tr>
+      </table>
+    </div>
+    <div class="deadline-note">⚠️ IMPORTANT: These are general timelines. ALWAYS verify exact deadlines on each university's official website — deadlines vary and change every year.</div>
+  </div>
+</div>
+
+<div class="chat">
+  <div class="progress-bar"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+  <div class="step-indicator">
+    <div class="step-label">Your journey</div>
+    <div class="step-dots" id="dots"></div>
+  </div>
+  <div id="messages"></div>
+  <div class="btns-area hidden" id="btns-area"></div>
+  <div class="input-bar hidden" id="input-bar">
+    <textarea id="inp" rows="1" placeholder="Type your answer..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();submitInput()}"></textarea>
+    <button id="send-btn" onclick="submitInput()">
+      <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+    </button>
+  </div>
+</div>
+<script>
+let studentName='',currentStep=0,programType='',waitingForYes=null;
+function renderDots(){const c=document.getElementById('dots');c.innerHTML='';for(let i=0;i<9;i++){const d=document.createElement('div');d.className='dot'+(i<currentStep-1?' done':i===currentStep-1?' active':'');c.appendChild(d);}}
+function setStep(n){currentStep=n;document.getElementById('progress').style.width=((n/9)*100)+'%';renderDots();}
+function addBot(html,delay=600){return new Promise(resolve=>{const tid=addTyping();setTimeout(()=>{removeEl(tid);const box=document.getElementById('messages');const d=document.createElement('div');d.className='msg';d.innerHTML=`<div class="av bot">G</div><div class="bubble bot">${html}</div>`;box.appendChild(d);box.scrollTop=box.scrollHeight;resolve();},delay);});}
+function addUser(text){const box=document.getElementById('messages');const d=document.createElement('div');d.className='msg user';d.innerHTML=`<div class="bubble user">${text}</div><div class="av usr">👤</div>`;box.appendChild(d);box.scrollTop=box.scrollHeight;}
+function addTyping(){const box=document.getElementById('messages');const d=document.createElement('div');const id='tp'+Date.now();d.id=id;d.className='msg';d.innerHTML=`<div class="av bot">G</div><div class="bubble bot"><div class="dots"><span></span><span></span><span></span></div></div>`;box.appendChild(d);box.scrollTop=box.scrollHeight;return id;}
+function removeEl(id){const e=document.getElementById(id);if(e)e.remove();}
+function showButtons(btns){waitingForYes=null;const area=document.getElementById('btns-area');area.innerHTML='';area.classList.remove('hidden');document.getElementById('input-bar').classList.add('hidden');btns.forEach(b=>{const btn=document.createElement('button');btn.className='opt-btn'+(b.primary?' primary':'')+(b.form?' form-btn':'');btn.textContent=b.label;btn.onclick=()=>{hideButtons();if(b.url){window.open(b.url,'_blank');return;}if(b.action)b.action();};area.appendChild(btn);});}
+function hideButtons(){document.getElementById('btns-area').classList.add('hidden');}
+function showInput(ph='Type yes to continue...'){hideButtons();const bar=document.getElementById('input-bar');bar.classList.remove('hidden');document.getElementById('inp').placeholder=ph;document.getElementById('inp').focus();}
+function hideInput(){document.getElementById('input-bar').classList.add('hidden');}
+function submitInput(){const inp=document.getElementById('inp');const text=inp.value.trim();if(!text)return;inp.value='';addUser(text);if(currentStep===1){hideInput();studentName=text;setTimeout(()=>step2(),400);return;}if(waitingForYes){hideInput();const fn=waitingForYes;waitingForYes=null;setTimeout(()=>fn(),400);return;}hideInput();}
+
+async function start(){setStep(1);await addBot(`Hi! 👋 Welcome to the <strong>German University Application Guide</strong>.<br><br>I'm here to guide you step by step — from scratch to top notch! 🎓<br><br>What's your name?`);showInput('Type your name...');}
+
+async function step2(){setStep(2);await addBot(`Nice to meet you, <strong>${studentName}</strong>! 😊<br><br>Just to confirm — you're applying from <strong>India</strong>, right?`,800);showButtons([{label:'🇮🇳 Yes, I am from India',action:step3},{label:'🌍 No, I am from another country',action:notIndia}]);}
+async function notIndia(){await addBot(`Thank you! Currently I only guide <strong>Indian students</strong>. Support for other countries is coming soon.`,600);showButtons([{label:'📝 Get General Guidance',url:'https://bit.ly/germanyguidance',form:true}]);}
+
+async function step3(){setStep(3);await addBot(`Perfect, <strong>${studentName}</strong>! 🇮🇳<br><br>Are you applying for a <strong>Bachelor's</strong> or <strong>Master's</strong> degree in Germany?`,800);showButtons([{label:"🎓 Bachelor's",action:()=>{programType='bachelors';askChecklist('bachelors');}},{label:"🎓 Master's",action:()=>{programType='masters';askChecklist('masters');}}]);}
+
+async function askChecklist(type){const label=type==='masters'?"Master's":"Bachelor's";await addBot(`Great choice! 🎓 <strong>${label}</strong> it is!<br><br>Would you like me to generate your <strong>personalised ${label} checklist</strong>? 📋`,800);showButtons([{label:'✅ Yes, show my checklist!',action:()=>type==='masters'?showMastersChecklist():showBachelorsChecklist()},{label:'➡️ Skip, continue',action:askLanguage}]);}
+
+async function showMastersChecklist(){
+  const items=["Bachelor's degree certificate","Academic transcripts (notarized copies)","Proof of language proficiency (IELTS/TOEFL or TestDaF/DSH)","Curriculum Vitae (CV)","Motivation letter (SOP)","Recommendation letters (if required)","Passport copy","Application fee receipt (for uni-assist)"];
+  await addBot(`Generating your checklist... ✨`,400);
+  const box=document.getElementById('messages');const d=document.createElement('div');d.className='msg';
+  d.innerHTML=`<div class="av bot">G</div><div class="bubble bot"><strong>📋 Your Master's Checklist:</strong><br><br><ul id="cl-items"></ul></div>`;
+  box.appendChild(d);const ul=document.getElementById('cl-items');
+  for(let i=0;i<items.length;i++){await new Promise(r=>setTimeout(r,350));const li=document.createElement('li');li.innerHTML=`✅ ${items[i]}`;li.style.animation='up 0.3s ease';ul.appendChild(li);box.scrollTop=box.scrollHeight;}
+  await new Promise(r=>setTimeout(r,500));
+  await addBot(`There's your checklist, <strong>${studentName}</strong>! ✅<br><br>Ready to move to <strong>Language Requirements</strong>? 📘`,600);
+  showButtons([{label:'✅ Yes, show language requirements!',action:askLanguage}]);
+}
+
+async function showBachelorsChecklist(){
+  const items=["Higher Secondary Certificate (Class 12 marksheets)","Academic transcripts (notarized copies)","Proof of language proficiency (TestDaF/DSH or IELTS/TOEFL)","Curriculum Vitae (CV)","Motivation letter","Passport copy","Application fee receipt (for uni-assist)"];
+  await addBot(`Generating your checklist... ✨`,400);
+  const box=document.getElementById('messages');const d=document.createElement('div');d.className='msg';
+  d.innerHTML=`<div class="av bot">G</div><div class="bubble bot"><strong>📋 Your Bachelor's Checklist:</strong><br><br><ul id="cl-items"></ul></div>`;
+  box.appendChild(d);const ul=document.getElementById('cl-items');
+  for(let i=0;i<items.length;i++){await new Promise(r=>setTimeout(r,350));const li=document.createElement('li');li.innerHTML=`✅ ${items[i]}`;li.style.animation='up 0.3s ease';ul.appendChild(li);box.scrollTop=box.scrollHeight;}
+  await new Promise(r=>setTimeout(r,500));
+  await addBot(`There's your checklist! ✅<br><br><div class="disclaimer">⚠️ IMPORTANT: If your Class 12 marks don't qualify for direct entry, you may need a Studienkolleg (1-year foundation course).</div>`,600);
+  showButtons([{label:'📘 Tell me about Studienkolleg',action:studienkolleg},{label:'✅ Continue to Language Requirements',action:askLanguage}]);
+}
+
+async function studienkolleg(){
+  await addBot(`<strong>Studienkolleg</strong> — 1-year preparatory course for students whose Class 12 marks don't qualify for direct entry.<br><br><ul><li>📝 Final exam: <strong>Feststellungsprüfung (FSP)</strong> — pass to apply for Bachelor's</li><li>📚 T-Course → Engineering / Science</li><li>📚 W-Course → Business / Economics</li><li>📚 M-Course → Medicine / Biology</li><li>📚 G-Course → Humanities / Languages</li></ul><br><strong>Documents needed:</strong> Class 12 certificate + transcripts, German language proof (B1/B2), Passport, Motivation letter, CV`,800);
+  await addBot(`Ready for <strong>Language Requirements</strong>? 📘`,800);
+  showButtons([{label:'✅ Yes, continue!',action:askLanguage}]);
+}
+
+async function askLanguage(){
+  setStep(4);
+  await addBot(`Now let's talk about <strong>Language Requirements</strong> 📘<br><br><div class="disclaimer">⚠️ IMPORTANT DISCLAIMER: Before booking ANY language exam, you MUST have a valid passport. Test centres will NOT allow registration or entry without it. No exceptions.</div>`,800);
+  await addBot(`<strong>For English-taught programs:</strong><br><ul><li>📘 IELTS → Overall band <strong>6.5 – 7.5</strong></li><li>📘 TOEFL iBT → <strong>90 – 100</strong> recommended</li></ul><br><strong>For German-taught programs:</strong><br><ul><li>🇩🇪 TestDaF → Minimum <strong>TDN 4</strong> in all sections</li><li>🇩🇪 DSH → Pass both written + oral exam (B2–C1 level)</li></ul>`,1200);
+  await addBot(`Got all that, <strong>${studentName}</strong>? 😊<br><br>Would you like a <strong>Preparation Guide</strong> with step-by-step resources for each exam?`,1000);
+  showButtons([{label:'📚 Yes, show preparation guide!',action:prepGuide},{label:'➡️ No, continue to APS',action:askAPS}]);
+}
+
+async function prepGuide(){addUser('Yes, show preparation guide!');await addBot(`Which exam are you preparing for? 🎯`,600);showButtons([{label:'📘 IELTS',action:ieltsPrepGuide},{label:'📘 TOEFL',action:toeflPrepGuide},{label:'🇩🇪 TestDaF / DSH',action:germanPrepGuide}]);}
+
+async function ieltsPrepGuide(){
+  addUser('IELTS');
+  await addBot(`<strong>📘 IELTS Step-by-Step Preparation Guide</strong><br><br><ul><li>📌 <strong>Step 1 — Learn the basics</strong><br>Understand format, sections, and band scoring.<br>👉 <a href="https://ielts.org" target="_blank" style="color:var(--gold-light)">ielts.org</a></li><br><li>📌 <strong>Step 2 — Practice with free tests</strong><br>Official British Council free practice tests.<br>👉 <a href="https://takeielts.britishcouncil.org/take-ielts/prepare/free-ielts-english-practice-tests" target="_blank" style="color:var(--gold-light)">British Council Practice Tests</a></li><br><li>📌 <strong>Step 3 — Take full mock tests</strong><br>Simulate real exam under timed conditions.<br>👉 <a href="https://ieltsonlinetests.com" target="_blank" style="color:var(--gold-light)">IELTS Online Tests</a></li><br><li>📌 <strong>Step 4 — Improve your score</strong><br>Tips, tricks, templates, and band score strategies.<br>👉 <a href="https://ieltsliz.com" target="_blank" style="color:var(--gold-light)">IELTS Liz</a></li></ul><br>💡 Give yourself <strong>3–4 months</strong> of daily practice. Book your exam slot at least 2 months before your deadline!`,1000);
+  await addBot(`Is it okay, <strong>${studentName}</strong>? Ready to move to <strong>APS & Uni-assist</strong>? 📋`,1000);
+  showButtons([{label:'✅ Yes, continue to APS!',action:askAPS},{label:'🔁 See other exam guides',action:prepGuide}]);
+}
+
+async function toeflPrepGuide(){
+  addUser('TOEFL');
+  await addBot(`<strong>📘 TOEFL Preparation Guide</strong><br><br><ul><li>📌 <strong>Step 1 — Learn the basics</strong><br>👉 <a href="https://www.ets.org/toefl" target="_blank" style="color:var(--gold-light)">ets.org/toefl</a></li><br><li>📌 <strong>Step 2 — Free practice tests</strong><br>👉 <a href="https://www.ets.org/toefl/test-takers/ibt/prepare/free-practice-test.html" target="_blank" style="color:var(--gold-light)">ETS Free Practice Test</a></li><br><li>📌 <strong>Step 3 — Full mock tests</strong><br>👉 <a href="https://www.toeflresources.com" target="_blank" style="color:var(--gold-light)">TOEFL Resources</a></li></ul><br>💡 Target score <strong>90–100 iBT</strong>. Give yourself 3–4 months of daily practice.`,1000);
+  await addBot(`Is it okay, <strong>${studentName}</strong>? Ready to move to <strong>APS & Uni-assist</strong>? 📋`,1000);
+  showButtons([{label:'✅ Yes, continue to APS!',action:askAPS},{label:'🔁 See other exam guides',action:prepGuide}]);
+}
+
+async function germanPrepGuide(){
+  addUser('TestDaF / DSH');
+  await addBot(`<strong>🇩🇪 TestDaF / DSH Preparation Guide</strong><br><br><ul><li>📌 <strong>Step 1 — Start with German basics</strong><br>Reach B1 first — use Goethe Institute or Duolingo/Babbel.<br>👉 <a href="https://www.goethe.de" target="_blank" style="color:var(--gold-light)">goethe.de</a></li><br><li>📌 <strong>Step 2 — Practice academic German</strong><br>Deutsche Welle free courses — essays, lectures, reading.<br>👉 <a href="https://learngerman.dw.com" target="_blank" style="color:var(--gold-light)">Deutsche Welle — Learn German</a></li><br><li>📌 <strong>Step 3 — TestDaF mock tests</strong><br>Official TestDaF sample papers and timed practice.<br>👉 <a href="https://www.testdaf.de" target="_blank" style="color:var(--gold-light)">testdaf.de</a></li><br><li>📌 <strong>Step 4 — DSH preparation</strong><br>DSH is offered by German universities directly. Contact your target university for prep materials.</li></ul><br>💡 Give yourself <strong>6–9 months</strong> if starting from scratch. Target <strong>TDN 4</strong> in all TestDaF sections.`,1000);
+  await addBot(`Is it okay, <strong>${studentName}</strong>? Ready to move to <strong>APS & Uni-assist</strong>? 📋`,1000);
+  showButtons([{label:'✅ Yes, continue to APS!',action:askAPS},{label:'🔁 See other exam guides',action:prepGuide}]);
+}
+
+async function askAPS(){setStep(5);await addBot(`Let's move to <strong>APS Certificate & Uni-assist</strong> 📋<br><br>Type <strong>yes</strong> to get started 👇`,800);showInput('Type yes to continue...');waitingForYes=showAPS;}
+
+async function showAPS(){
+  await addBot(`<strong>📄 APS Certificate</strong> — Academic Evaluation Centre, New Delhi<br><br>APS is <strong>MANDATORY for ALL Indian students</strong> applying to German universities.<br><br><strong>Documents you need:</strong><br><ul><li>✅ Class 10 certificate + marksheets (notarized)</li><li>✅ Class 12 certificate + marksheets (notarized)</li><li>✅ Bachelor's degree + transcripts (notarized) — for Master's applicants</li><li>✅ Passport copy (valid)</li><li>✅ Language certificates (if available)</li><li>✅ Completed APS online application form</li><li>✅ Payment proof (~₹18,000)</li></ul><br>Processing time: <strong>4–6 weeks</strong> after submission.<br><br><div class="disclaimer">⚠️ IMPORTANT DISCLAIMER: ALWAYS check the official APS India portal before submitting — requirements, fees, and processing times CAN AND DO change. Do NOT rely solely on this guide. Official portal: aps-india.de</div>`,1000);
+  await addBot(`Got all that, <strong>${studentName}</strong>? 😊<br><br>The next step is your <strong>Uni-assist Account</strong>. Would you like to know how to set it up?`,1400);
+  showButtons([{label:'✅ Yes, show me Uni-assist!',action:showUniAssist},{label:'➡️ Skip, go to Shortlisting',action:step6}]);
+}
+
+async function showUniAssist(){
+  addUser('Yes, show me Uni-assist!');
+  await addBot(`<strong>🌐 How to Set Up Your Uni-assist Account</strong><br><br><ul><li>1️⃣ Go to <a href="https://www.uni-assist.de" target="_blank" style="color:var(--gold-light)">uni-assist.de</a> and create a free account</li><li>2️⃣ Upload your <strong>APS certificate</strong> + all academic documents</li><li>3️⃣ Search and select your universities and programs</li><li>4️⃣ Pay: <strong>€75</strong> for first university · <strong>€30</strong> for each additional</li><li>5️⃣ Submit and track your application status online</li></ul><br><div class="disclaimer">⚠️ IMPORTANT DISCLAIMER: NOT ALL universities use Uni-assist. Always check the university's official website FIRST to confirm. Fees are subject to change — VERIFY on the official Uni-assist portal before paying.</div>`,1000);
+  await addBot(`That's Uni-assist! 🎓<br><br>Would you like to know how to do <strong>University Shortlisting</strong>?`,1400);
+  showButtons([{label:'✅ Yes, show me Shortlisting!',action:step6},{label:'➡️ Skip, continue',action:step7}]);
+}
+
+async function step6(){
+  setStep(6);
+  await addBot(`<strong>🎓 University Shortlisting</strong><br><br>Check both <strong>Universities</strong> and <strong>Hochschulen</strong> (Universities of Applied Sciences). Always review the <strong>course curriculum</strong> before finalizing.<br><br><strong>🌐 Where to search:</strong><br><ul><li>🔵 <strong>DAAD</strong> → <a href="https://www.daad.de" target="_blank" style="color:var(--gold-light)">daad.de</a> — search by subject, city, language</li><li>🔵 <strong>Uni-assist</strong> → <a href="https://www.uni-assist.de" target="_blank" style="color:var(--gold-light)">uni-assist.de</a> — see which unis use it</li><li>🔵 <strong>University websites</strong> — best for exact requirements, deadlines, curriculum</li></ul><br><div class="disclaimer">⚠️ IMPORTANT DISCLAIMER: Always double-check ALL requirements, fees, and deadlines DIRECTLY on the official university website. DAAD and Uni-assist are helpful but the UNIVERSITY'S OWN PORTAL IS THE FINAL AUTHORITY.</div>`,800);
+  await addBot(`Would you like to see the <strong>Shortlisting Strategies</strong> — how to pick and split your universities smartly?<br><br>Type <strong>yes</strong> to see strategies or click skip 👇`,1000);
+  showButtons([
+    {label:'✅ Yes, show strategies!', action:()=>{addUser('yes');hideButtons();setTimeout(showShortlistingStrategy,400);}},
+    {label:'➡️ Skip, go to Documents', action:step7}
+  ]);
+}
+
+async function showShortlistingStrategy(){
+  await addBot(`<strong>🎯 Shortlisting Strategy</strong><br><br>Apply to <strong>5–7 universities total</strong>:<br><ul><li>🔥 <strong>2–3 Ambitious</strong> — TU Munich, RWTH Aachen, Heidelberg. Competitive but worth trying!</li><li>✅ <strong>2–3 Safe</strong> — strong programs with higher acceptance rates like Hochschule München, TU Dortmund</li><li>🛡️ <strong>1–2 Backup</strong> — universities with more flexible requirements</li></ul><br><strong>For each university, check:</strong><br><ul><li>📌 Language of instruction (English or German?)</li><li>📌 Application deadline (some as early as January!)</li><li>📌 Portal type (Uni-assist or direct?)</li><li>📌 Course curriculum (does it match your goals?)</li><li>📌 Hochschule or University? (practical vs research focus)</li></ul><br><div class="disclaimer">⚠️ IMPORTANT DISCLAIMER: Deadlines vary by university and CHANGE EVERY YEAR. Missing a deadline means waiting a FULL YEAR. Always verify on the official university portal before applying.</div>`,1000);
+  await addBot(`Got the strategy, <strong>${studentName}</strong>? 😊<br><br>Ready to move to <strong>Document Uploads & Submission</strong>? 📁`,1000);
+  showButtons([{label:'✅ Yes, continue!',action:step7}]);
+}
+
+async function step7(){
+  setStep(7);
+  await addBot(`<strong>📁 Document Uploads & Application Submission</strong><br><br>Prepare these before applying:<br><br><ul><li>📄 Academic Certificates (Class 12 or Bachelor's transcripts)</li><li>📄 APS Certificate (mandatory)</li><li>📄 Language Certificates (IELTS/TOEFL/TestDaF/DSH)</li><li>📄 Passport copy (valid + clear scan)</li><li>📄 CV/Resume (Europass format recommended)</li><li>📄 Statement of Purpose (SOP) — tailored per university</li><li>📄 Letters of Recommendation (signed + stamped)</li><li>📄 MoI Certificate — if degree was in English and IELTS/TOEFL is waived</li></ul>`,800);
+  await addBot(`<strong>📂 File Formatting Rules:</strong><br><br><ul><li>Save ALL documents as <strong>PDF</strong></li><li>Use clear file names — e.g. <em>Transcript_Bachelor.pdf</em>, <em>MoI_Certificate.pdf</em></li><li>Scans must be clear and under 5–10 MB per file</li><li>Combine multi-page documents into one PDF</li></ul><br><div class="disclaimer">⚠️ IMPORTANT DISCLAIMER: ALWAYS verify exact document requirements on the OFFICIAL UNIVERSITY PORTAL before uploading. Requirements vary by program and change regularly. Wrong or incomplete documents can lead to REJECTION.</div>`,1200);
+  await addBot(`Ready for <strong>Application Deadlines & Tracking</strong>? 📅`,800);
+  showButtons([{label:'✅ Yes, continue!',action:step8}]);
+}
+
+async function step8(){
+  setStep(8);
+  await addBot(`<strong>📅 Application Deadlines & Tracking</strong><br><br>Deadlines in Germany are <strong>STRICT</strong> — late applications are NOT accepted.<br><br><strong>Key semester dates:</strong><br><ul><li>🍂 <strong>Winter Semester</strong> (starts October) → Apply by <strong>May – July</strong></li><li>🌸 <strong>Summer Semester</strong> (starts April) → Apply by <strong>November – January</strong></li></ul><br><strong>Track for each university:</strong><br><ul><li>📌 Application deadline</li><li>📌 Portal type (uni-assist or direct)</li><li>📌 Status (Applied / Pending / Accepted / Rejected)</li><li>📌 Notes (extra docs like MoI, SOP, special forms)</li></ul><br><div class="disclaimer">⚠️ IMPORTANT DISCLAIMER: Missing a deadline means waiting a FULL YEAR for the next intake. ALWAYS confirm the EXACT deadline on the OFFICIAL UNIVERSITY WEBSITE. Deadlines change every year.</div>`,800);
+  await addBot(`Ready for the final step — <strong>Visa Preparation</strong>? 🛂`,800);
+  showButtons([{label:'✅ Yes, continue to Visa!',action:step9}]);
+}
+
+async function step9(){
+  setStep(9);
+  await addBot(`<strong>🛂 Visa Preparation</strong><br><br>Once you receive your admission letter, prepare these documents:<br><br><ul><li>📄 Admission Letter — from the German university</li><li>📄 APS Certificate — already obtained in earlier steps</li><li>📄 Academic Documents — transcripts and certificates</li><li>📄 Passport — valid for entire study period</li><li>📄 Financial Proof — blocked account (~€11,208/year) or scholarship letter</li><li>📄 Health Insurance — German or recognized international coverage</li><li>📄 Visa Application Form — completed and signed</li><li>📄 Biometric Photos — as per embassy specifications</li><li>📄 SOP / Study Plan — sometimes requested by the embassy</li></ul>`,800);
+  await addBot(`Would you like to know the <strong>step-by-step Visa Application Process</strong>? 🛂`,1000);
+  showButtons([{label:'✅ Yes, show me the process!',action:visaProcess},{label:'➡️ Skip, finish the guide',action:askSOPLOR}]);
+}
+
+async function visaProcess(){
+  addUser('Yes, show me the process!');
+  await addBot(`<strong>🛂 Step-by-Step Visa Application Process</strong><br><br><ul><li><strong>Step 1 — Open Blocked Account (Sperrkonto)</strong><br>Deposit ~€11,208. Example providers: Fintiba, Expatrio, Coracle. Takes 1–2 weeks.</li><br><li><strong>Step 2 — Get Health Insurance</strong><br>Example providers: TK, AOK, Barmer (public) or private options.</li><br><li><strong>Step 3 — Book Visa Appointment</strong><br>At German Embassy / Consulate in India — Delhi, Mumbai, Chennai, Kolkata, Hyderabad, Bengaluru.<br><strong>⚠️ Book EARLY — slots fill months in advance!</strong></li><br><li><strong>Step 4 — Attend the Appointment</strong><br>Bring ALL original documents + photocopies.</li><br><li><strong>Step 5 — Wait for Processing</strong><br>Usually 6–12 weeks. Do NOT book flights until visa is approved.</li></ul><br><div class="disclaimer">⚠️ IMPORTANT DISCLAIMER: Visa requirements, fees, and processing times CAN CHANGE at any time. ALWAYS check the OFFICIAL GERMAN EMBASSY WEBSITE IN INDIA before applying. This information is for guidance only.</div>`,1000);
+  setTimeout(()=>askSOPLOR(),1000);
+}
+
+async function askSOPLOR(){
+  await addBot(`Almost done, <strong>${studentName}</strong>! 🎉<br><br>Do you need help with your <strong>Sample SOP</strong> (Statement of Purpose) or <strong>LOR</strong> (Letter of Recommendation) tips?`,1000);
+  showButtons([
+    {label:'📝 Yes, show me SOP & LOR help!', action:showSOPLOR},
+    {label:'➡️ No, finish the guide', action:finalStep}
+  ]);
+}
+
+async function showSOPLOR(){
+  addUser('Yes, show me SOP & LOR help!');
+  await addBot(`<strong>📝 SOP — Statement of Purpose</strong><br><br>
+    <strong>Bachelor's SOP (500–700 words):</strong><br>
+    <ul>
+      <li>Para 1 — Opening hook (a personal moment that led you to this field)</li>
+      <li>Para 2 — Academic background (Class 12, subjects, performance)</li>
+      <li>Para 3 — Self-learning / projects outside school</li>
+      <li>Para 4 — Why this university specifically (curriculum, modules, labs)</li>
+      <li>Para 5 — Your short and long term goals</li>
+      <li>Para 6 — Strong, confident closing</li>
+    </ul><br>
+    <strong>Master's SOP (700–1000 words):</strong><br>
+    <ul>
+      <li>Para 1 — Opening hook (specific academic or professional moment)</li>
+      <li>Para 2 — Bachelor's degree, key projects, thesis</li>
+      <li>Para 3 — Internship / work experience</li>
+      <li>Para 4 — Why this program (specific modules, professors, labs)</li>
+      <li>Para 5 — Why Germany</li>
+      <li>Para 6 — Short term goals (during Master's)</li>
+      <li>Para 7 — Long term goals (5–10 years)</li>
+      <li>Para 8 — Confident closing</li>
+    </ul><br>
+    <div class="disclaimer">⚠️ IMPORTANT: Every SOP must be UNIQUE per university. Always mention the specific university name, program, and at least one module or professor. NEVER send the same SOP to all universities.</div>`,1000);
+
+  await addBot(`<strong>✉️ LOR — Letter of Recommendation</strong><br><br>
+    <strong>Who to ask:</strong><br>
+    <ul>
+      <li>A professor who taught you a relevant subject</li>
+      <li>A manager or supervisor from your internship / job</li>
+      <li>A research supervisor (for Master's)</li>
+    </ul><br>
+    <strong>What a good LOR includes:</strong><br>
+    <ul>
+      <li>How long they have known you and in what capacity</li>
+      <li>Specific examples of your work, achievements, or qualities</li>
+      <li>Why you are suitable for the program and university</li>
+      <li>Their contact details, signature, and official letterhead</li>
+    </ul><br>
+    <strong>Tips:</strong><br>
+    <ul>
+      <li>Ask at least 1 month before the deadline</li>
+      <li>Give your recommender your CV, SOP, and program details</li>
+      <li>Most Master's programs require 2 LORs</li>
+      <li>LORs must be signed, stamped, and on official letterhead</li>
+    </ul><br>
+    <div class="disclaimer">⚠️ IMPORTANT: Always check the specific LOR requirements on the university website — some want them sealed and signed, some accept email submissions directly from the recommender.</div>`,1400);
+
+  setTimeout(()=>finalStep(),800);
+}
+
+async function finalStep(){
+  await addBot(`✨ <strong>That's it, ${studentName} — happy starting!</strong> 🎉<br><br>You now have a complete roadmap for your German university application journey!<br><br>✅ Checklist ready &nbsp;·&nbsp; ✅ Language requirements known<br>✅ APS & Uni-assist understood &nbsp;·&nbsp; ✅ Universities shortlisted<br>✅ Documents prepared &nbsp;·&nbsp; ✅ Visa process understood<br><br>Best of luck, <strong>${studentName}</strong>! You've got this 🇩🇪🎓`,1200);
+  await addBot(`Here are some useful tools to take with you! 👇`,1400);
+  showButtons([
+    {label:'🗺️ View My Roadmap', action:()=>{
+      const s=document.getElementById('roadmap-section');
+      s.classList.add('show');
+      setTimeout(()=>s.scrollIntoView({behavior:'smooth'}),100);
+    }},
+    {label:'📅 Deadline Calculator', action:()=>{
+      const s=document.getElementById('deadline-section');
+      s.classList.add('show');
+      setTimeout(()=>s.scrollIntoView({behavior:'smooth'}),100);
+    }},
+    {label:'📝 Get Further Guidance', url:'https://bit.ly/germanyguidance', form:true},
+    {label:'🔄 Start Again', action:()=>{
+      document.getElementById('messages').innerHTML='';
+      document.getElementById('roadmap-section').classList.remove('show');
+      document.getElementById('deadline-section').classList.remove('show');
+      start();
+    }}
+  ]);
+}
+
+function switchTab(tab, btn) {
+  document.querySelectorAll('.dtab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-winter').style.display = tab==='winter' ? 'block' : 'none';
+  document.getElementById('tab-summer').style.display = tab==='summer' ? 'block' : 'none';
+}
+
+window.onload=()=>{renderDots();setTimeout(start,500);};
+</script>
+</body>
+</html>
