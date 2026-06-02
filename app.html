@@ -1,0 +1,1568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ScratchToTopNotch — German University Finder</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=Lora:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #1E293B;
+  --navy2: #162032;
+  --navy3: #253347;
+  --navy4: #2d3f56;
+  --amber: #F59E0B;
+  --amber-light: #fbbf24;
+  --amber-dim: #b37a08;
+  --emerald: #10B981;
+  --emerald-dim: #0a8a5e;
+  --ice: #F1F5F9;
+  --ice2: #E2E8F0;
+  --text: #1E293B;
+  --text-dim: #64748B;
+  --text-light: #94A3B8;
+  --safe: #10B981;
+  --moderate: #F59E0B;
+  --reach: #EF4444;
+  --white: #ffffff;
+  --card-bg: #ffffff;
+  --border: #E2E8F0;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--ice);
+  color: var(--text);
+  font-family: 'Sora', sans-serif;
+  min-height: 100vh;
+}
+
+/* HEADER */
+header {
+  background: var(--navy);
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+}
+
+.logo {
+  font-family: 'Lora', serif;
+  font-size: 1.4rem;
+  color: var(--amber);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-sub { font-family: 'Sora', sans-serif; font-size: 0.75rem; color: #94A3B8; font-weight: 300; }
+
+.header-badge {
+  background: rgba(16,185,129,0.15);
+  border: 1px solid rgba(16,185,129,0.3);
+  color: var(--emerald);
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* PROFILE STRENGTH */
+.strength-bar-wrap {
+  background: var(--navy);
+  padding: 12px 40px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.strength-label { font-size: 0.78rem; color: #94A3B8; white-space: nowrap; }
+.strength-track {
+  flex: 1;
+  height: 6px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.strength-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--amber), var(--emerald));
+  border-radius: 3px;
+  width: 0%;
+  transition: width 0.6s ease;
+}
+.strength-pct { font-size: 0.8rem; color: var(--amber); font-weight: 600; min-width: 36px; }
+
+/* TABS */
+.tabs {
+  background: var(--white);
+  border-bottom: 2px solid var(--border);
+  padding: 0 40px;
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.tabs::-webkit-scrollbar { display: none; }
+
+.tab {
+  padding: 14px 22px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-dim);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.tab.active { color: var(--amber); border-bottom-color: var(--amber); }
+.tab:hover { color: var(--text); }
+
+/* PANELS */
+.panel { display: none; padding: 36px 40px; max-width: 1100px; margin: 0 auto; }
+.panel.active { display: block; }
+
+/* PAGE TITLE */
+.page-title {
+  font-family: 'Lora', serif;
+  font-size: 1.7rem;
+  color: var(--navy);
+  margin-bottom: 6px;
+}
+.page-sub { color: var(--text-dim); font-size: 0.88rem; margin-bottom: 28px; }
+
+/* CARD */
+.card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+
+/* FORM */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 22px; }
+.form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 18px; }
+.form-group { display: flex; flex-direction: column; gap: 7px; }
+.form-group.full { grid-column: 1 / -1; }
+
+label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+input, select, textarea {
+  background: var(--ice);
+  border: 1.5px solid var(--border);
+  color: var(--text);
+  padding: 11px 14px;
+  border-radius: 8px;
+  font-family: 'Sora', sans-serif;
+  font-size: 0.9rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--amber);
+  box-shadow: 0 0 0 3px rgba(245,158,11,0.1);
+}
+
+textarea { resize: vertical; min-height: 180px; }
+
+/* BUTTON */
+.btn {
+  background: var(--amber);
+  color: var(--navy);
+  border: none;
+  padding: 12px 28px;
+  border-radius: 8px;
+  font-family: 'Sora', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+.btn:hover { background: var(--amber-light); }
+.btn:active { transform: scale(0.98); }
+
+.btn-sm {
+  padding: 8px 18px;
+  font-size: 0.82rem;
+  border-radius: 6px;
+}
+
+.btn-green {
+  background: var(--emerald);
+  color: white;
+}
+.btn-green:hover { background: var(--emerald-dim); }
+
+/* LOADING */
+.loading { text-align: center; padding: 50px 0; color: var(--text-dim); }
+.spinner {
+  width: 32px; height: 32px;
+  border: 3px solid var(--border);
+  border-top-color: var(--amber);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 14px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* RESULTS SUMMARY */
+.results-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.summary-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px;
+  text-align: center;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+
+.summary-number {
+  font-family: 'Lora', serif;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.summary-label { font-size: 0.78rem; color: var(--text-dim); }
+.safe-color { color: var(--safe); }
+.moderate-color { color: var(--moderate); }
+.reach-color { color: var(--reach); }
+
+/* TIER */
+.tier-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.tier-badge {
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 0.73rem;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.tier-badge.safe { background: rgba(16,185,129,0.1); color: var(--safe); border: 1px solid rgba(16,185,129,0.25); }
+.tier-badge.moderate { background: rgba(245,158,11,0.1); color: var(--moderate); border: 1px solid rgba(245,158,11,0.25); }
+.tier-badge.reach { background: rgba(239,68,68,0.1); color: var(--reach); border: 1px solid rgba(239,68,68,0.25); }
+.tier-count { color: var(--text-dim); font-size: 0.83rem; }
+.tier-section { margin-bottom: 32px; }
+
+/* UNI CARDS */
+.uni-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+.uni-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  transition: box-shadow 0.2s, transform 0.15s;
+  border-top: 3px solid transparent;
+}
+
+.uni-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); transform: translateY(-2px); }
+.uni-card.safe { border-top-color: var(--safe); }
+.uni-card.moderate { border-top-color: var(--moderate); }
+.uni-card.reach { border-top-color: var(--reach); }
+
+.uni-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
+.uni-name { font-family: 'Lora', serif; font-size: 0.95rem; color: var(--navy); flex: 1; line-height: 1.3; }
+
+.uni-type-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-left: 8px;
+  white-space: nowrap;
+}
+.tu-badge { background: rgba(30,41,59,0.08); color: var(--navy); }
+.fh-badge { background: rgba(16,185,129,0.1); color: var(--emerald-dim); }
+
+.programme-name { font-size: 0.82rem; color: var(--amber-dim); font-weight: 600; margin-bottom: 12px; }
+
+.job-hub { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; }
+.job-hub-label { font-size: 0.72rem; color: var(--text-dim); }
+.job-dots { display: flex; gap: 3px; }
+.job-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); }
+.job-dot.filled { background: var(--amber); }
+
+.uni-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+.meta-item { display: flex; flex-direction: column; gap: 2px; }
+.meta-label { font-size: 0.68rem; color: var(--text-light); letter-spacing: 0.4px; text-transform: uppercase; }
+.meta-value { font-size: 0.83rem; color: var(--text); font-weight: 600; }
+
+.uni-note {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  background: var(--ice);
+  padding: 8px 10px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.uni-card-footer { display: flex; justify-content: space-between; align-items: center; }
+.deadline-badge { font-size: 0.73rem; color: var(--text-dim); }
+.deadline-badge strong { color: var(--text); }
+.apply-link { font-size: 0.78rem; color: var(--amber-dim); text-decoration: none; font-weight: 600; }
+.apply-link:hover { text-decoration: underline; }
+
+/* ---- ECTS MATCHER ---- */
+.ects-result {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 14px;
+}
+
+.ects-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px;
+}
+
+.ects-subject { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px; letter-spacing: 0.5px; }
+.ects-bar-wrap { height: 10px; background: var(--ice2); border-radius: 5px; margin-bottom: 8px; overflow: hidden; }
+.ects-bar { height: 100%; border-radius: 5px; transition: width 0.6s; }
+.ects-bar.ok { background: var(--emerald); }
+.ects-bar.warn { background: var(--moderate); }
+.ects-bar.fail { background: var(--reach); }
+.ects-verdict { font-size: 0.82rem; font-weight: 600; }
+.ects-verdict.ok { color: var(--safe); }
+.ects-verdict.warn { color: var(--moderate); }
+.ects-verdict.fail { color: var(--reach); }
+.ects-numbers { font-size: 0.78rem; color: var(--text-dim); margin-top: 4px; }
+
+/* ---- SCHOLARSHIPS ---- */
+.scholarship-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+.scholarship-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  transition: box-shadow 0.15s;
+}
+.scholarship-card:hover { box-shadow: 0 3px 12px rgba(0,0,0,0.07); }
+
+.sch-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+.sch-name { font-family: 'Lora', serif; font-size: 1rem; color: var(--navy); }
+.sch-amount { font-size: 0.8rem; font-weight: 700; color: var(--emerald); background: rgba(16,185,129,0.08); padding: 3px 10px; border-radius: 20px; }
+
+.sch-org { font-size: 0.78rem; color: var(--text-dim); margin-bottom: 8px; font-weight: 600; }
+.sch-desc { font-size: 0.82rem; color: var(--text-dim); line-height: 1.5; margin-bottom: 12px; }
+.sch-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.sch-tag { font-size: 0.7rem; background: var(--ice); color: var(--text-dim); padding: 3px 9px; border-radius: 4px; }
+.sch-deadline { font-size: 0.75rem; color: var(--text-light); }
+.sch-deadline strong { color: var(--reach); }
+.sch-link { font-size: 0.78rem; color: var(--amber-dim); font-weight: 600; text-decoration: none; float: right; }
+.sch-link:hover { text-decoration: underline; }
+
+/* ---- LOR GENERATOR ---- */
+.lor-output {
+  background: var(--ice);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+  font-size: 0.88rem;
+  line-height: 1.8;
+  color: var(--text);
+  white-space: pre-wrap;
+  margin-top: 20px;
+  font-family: Georgia, serif;
+}
+
+.copy-btn {
+  margin-top: 12px;
+  background: var(--navy);
+  color: white;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 6px;
+  font-family: 'Sora', sans-serif;
+  font-size: 0.82rem;
+  cursor: pointer;
+  font-weight: 600;
+}
+.copy-btn:hover { background: var(--navy3); }
+
+/* ---- COST OF LIVING ---- */
+.col-city-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+
+.col-city-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.col-city-header {
+  background: var(--navy);
+  color: white;
+  padding: 14px 16px;
+}
+
+.col-city-name { font-family: 'Lora', serif; font-size: 1rem; }
+.col-city-state { font-size: 0.72rem; color: #94A3B8; margin-top: 2px; }
+
+.col-items { padding: 14px 16px; }
+.col-item { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--ice2); }
+.col-item:last-child { border-bottom: none; }
+.col-item-label { font-size: 0.8rem; color: var(--text-dim); }
+.col-item-value { font-size: 0.88rem; font-weight: 700; color: var(--navy); }
+.col-total { background: var(--ice); padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; }
+.col-total-label { font-size: 0.78rem; font-weight: 700; color: var(--text-dim); text-transform: uppercase; }
+.col-total-value { font-size: 1rem; font-weight: 700; color: var(--amber-dim); }
+
+/* FILTER BAR */
+.filter-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.filter-chip {
+  padding: 7px 16px;
+  border-radius: 20px;
+  border: 1.5px solid var(--border);
+  background: var(--white);
+  font-size: 0.8rem;
+  cursor: pointer;
+  font-family: 'Sora', sans-serif;
+  transition: all 0.15s;
+  font-weight: 500;
+}
+.filter-chip.active { background: var(--amber); border-color: var(--amber); color: var(--navy); font-weight: 700; }
+.filter-chip:hover { border-color: var(--amber); }
+
+/* SOP */
+.sop-score-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 20px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 24px;
+  align-items: center;
+}
+.score-circle {
+  width: 96px; height: 96px;
+  border-radius: 50%;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  font-family: 'Lora', serif;
+  flex-shrink: 0;
+}
+.score-number { font-size: 2.2rem; font-weight: 700; line-height: 1; }
+.score-max { font-size: 0.72rem; opacity: 0.7; }
+.score-green { background: rgba(16,185,129,0.1); border: 2px solid var(--emerald); color: var(--emerald); }
+.score-orange { background: rgba(245,158,11,0.1); border: 2px solid var(--amber); color: var(--amber-dim); }
+.score-red { background: rgba(239,68,68,0.1); border: 2px solid var(--reach); color: var(--reach); }
+.score-meta h3 { font-family: 'Lora', serif; font-size: 1.3rem; margin-bottom: 5px; color: var(--navy); }
+.score-meta p { color: var(--text-dim); font-size: 0.85rem; margin-bottom: 10px; }
+.score-positives { display: flex; flex-wrap: wrap; gap: 7px; }
+.positive-tag { background: rgba(16,185,129,0.08); color: var(--emerald-dim); border: 1px solid rgba(16,185,129,0.2); padding: 3px 10px; border-radius: 20px; font-size: 0.75rem; }
+
+.flags-title { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.7px; text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px; }
+.flag-item { background: var(--white); border: 1px solid var(--border); border-left: 3px solid var(--reach); border-radius: 0 8px 8px 0; padding: 12px 14px; margin-bottom: 8px; }
+.flag-item.generic_phrase { border-left-color: var(--moderate); }
+.flag-item.repetition { border-left-color: #7C3AED; }
+.flag-found { font-size: 0.83rem; color: var(--text); margin-bottom: 3px; }
+.flag-suggestion { font-size: 0.8rem; color: var(--text-dim); }
+.flag-suggestion::before { content: "→ "; color: var(--amber-dim); }
+
+.priorities-section { background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.2); border-radius: 10px; padding: 18px; }
+.priorities-title { font-family: 'Lora', serif; color: var(--amber-dim); font-size: 1.05rem; margin-bottom: 12px; }
+.priority-item { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 8px; }
+.priority-num { width: 22px; height: 22px; background: var(--amber); color: var(--navy); border-radius: 50%; font-size: 0.72rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.priority-text { font-size: 0.85rem; color: var(--text); line-height: 1.5; }
+
+.empty-state { text-align: center; padding: 40px; color: var(--text-dim); }
+
+@media (max-width: 700px) {
+  .form-grid, .form-grid-3, .uni-cards, .results-summary, .sop-score-card, .ects-result, .scholarship-grid, .col-city-grid { grid-template-columns: 1fr; }
+  .panel { padding: 20px; }
+  header { padding: 0 16px; }
+  .tabs { padding: 0 16px; }
+  .strength-bar-wrap { padding: 10px 16px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    🇩🇪 ScratchToTopNotch
+    <span class="logo-sub">German University Finder</span>
+  </div>
+  <div class="header-badge">✓ 40 Universities</div>
+</header>
+
+<!-- PROFILE STRENGTH BAR -->
+<div class="strength-bar-wrap">
+  <div class="strength-label">Profile Strength</div>
+  <div class="strength-track">
+    <div class="strength-fill" id="strengthFill"></div>
+  </div>
+  <div class="strength-pct" id="strengthPct">0%</div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('finder', this)">🎓 University Finder</div>
+  <div class="tab" onclick="switchTab('ects', this)">📊 ECTS Matcher</div>
+  <div class="tab" onclick="switchTab('scholarships', this)">💰 Scholarships</div>
+  <div class="tab" onclick="switchTab('lor', this)">📄 LOR Generator</div>
+  <div class="tab" onclick="switchTab('cost', this)">🏠 Cost of Living</div>
+  <div class="tab" onclick="switchTab('sop', this)">✍️ SOP Analyser</div>
+</div>
+<div style="background:var(--white);border-bottom:1px solid var(--border);padding:4px 40px;font-size:0.72rem;color:var(--text-light);display:flex;align-items:center;gap:6px;">
+  <span>←  scroll tabs to see all  →</span>
+</div>
+
+<!-- ===== UNIVERSITY FINDER ===== -->
+<div id="finder" class="panel active">
+  <div class="page-title">Find Your Match</div>
+  <div class="page-sub">Enter your profile and we rank 40 German universities into Safe, Moderate, and Reach tiers.</div>
+
+  <div class="card">
+
+    <!-- Section 1: Academics -->
+    <div style="margin-bottom:6px;font-size:0.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--amber-dim);">📚 Section 1 — Academics</div>
+    <div style="height:1px;background:var(--border);margin-bottom:16px;"></div>
+    <div class="form-grid" style="margin-bottom:24px">
+      <div class="form-group">
+        <label>CGPA (out of 10)</label>
+        <input type="number" id="cgpa" min="4" max="10" step="0.01" placeholder="e.g. 8.06" oninput="updateStrength()">
+      </div>
+      <div class="form-group">
+        <label>Field of Interest</label>
+        <select id="field" onchange="updateStrength()">
+          <option value="">Select field...</option>
+          <option value="cs">Computer Science</option>
+          <option value="ds">Data Science / AI / ML</option>
+          <option value="web">Web Engineering</option>
+          <option value="it">Information Technology</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Section 2: Requirements -->
+    <div style="margin-bottom:6px;font-size:0.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--amber-dim);">📋 Section 2 — Requirements</div>
+    <div style="height:1px;background:var(--border);margin-bottom:16px;"></div>
+    <div class="form-grid" style="margin-bottom:24px">
+      <div class="form-group">
+        <label>English Proof</label>
+        <select id="english" onchange="updateStrength()">
+          <option value="">Select...</option>
+          <option value="ielts">IELTS</option>
+          <option value="toefl">TOEFL</option>
+          <option value="duolingo">Duolingo</option>
+          <option value="moi">Medium of Instruction Letter</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Work Experience</label>
+        <select id="work_exp" onchange="updateStrength()">
+          <option value="none">None</option>
+          <option value="internship">Internship only</option>
+          <option value="fulltime">Full-time (&lt; 1 year)</option>
+          <option value="experienced">1+ years full-time</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Section 3: Preferences -->
+    <div style="margin-bottom:6px;font-size:0.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--amber-dim);">⚙️ Section 3 — Preferences</div>
+    <div style="height:1px;background:var(--border);margin-bottom:16px;"></div>
+    <div class="form-grid" style="margin-bottom:8px">
+      <div class="form-group">
+        <label>Max Semester Tuition Fee (€)</label>
+        <input type="number" id="budget" min="0" max="20000" step="100" placeholder="e.g. 500 (most public unis are free–€350)" oninput="updateStrength()">
+        <div style="font-size:0.72rem;color:var(--text-light);margin-top:4px;">💡 Separate from living costs. Germany blocked account requires ~€934/month for visa.</div>
+      </div>
+      <div class="form-group">
+        <label>City Preference</label>
+        <select id="city_pref">
+          <option value="any">Any</option>
+          <option value="large">Large (Berlin, Munich, Hamburg)</option>
+          <option value="medium">Medium (Aachen, Dresden, Freiburg)</option>
+          <option value="small">Small (Chemnitz, Passau, Cottbus)</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="margin-top:22px">
+      <button class="btn" onclick="findUniversities()">Find My Matches →</button>
+    </div>
+  </div>
+
+  <div id="finder-results"></div>
+</div>
+
+<!-- ===== ECTS MATCHER ===== -->
+<div id="ects" class="panel">
+  <div class="page-title">ECTS Credit Matcher</div>
+  <div class="page-sub">Enter your credits in each subject. We tell you if you meet German university requirements — and where you'll be rejected.</div>
+
+  <div class="card">
+    <div class="form-grid-3">
+      <div class="form-group">
+        <label>Math Credits (your university)</label>
+        <input type="number" id="ects-math" placeholder="e.g. 20" min="0" max="60">
+      </div>
+      <div class="form-group">
+        <label>Theoretical CS Credits</label>
+        <input type="number" id="ects-tcs" placeholder="e.g. 15" min="0" max="60">
+      </div>
+      <div class="form-group">
+        <label>Programming Credits</label>
+        <input type="number" id="ects-prog" placeholder="e.g. 30" min="0" max="60">
+      </div>
+    </div>
+    <div class="form-grid-3">
+      <div class="form-group">
+        <label>Algorithms Credits</label>
+        <input type="number" id="ects-algo" placeholder="e.g. 10" min="0" max="60">
+      </div>
+      <div class="form-group">
+        <label>Databases Credits</label>
+        <input type="number" id="ects-db" placeholder="e.g. 10" min="0" max="60">
+      </div>
+      <div class="form-group">
+        <label>Your University Credit System</label>
+        <select id="ects-system">
+          <option value="ects">ECTS (Europe)</option>
+          <option value="us">US Credits (multiply ×1.5)</option>
+          <option value="india">Indian Credits (approx = ECTS)</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn" onclick="matchECTS()">Check My Credits →</button>
+  </div>
+
+  <div id="ects-results"></div>
+</div>
+
+<!-- ===== SCHOLARSHIPS ===== -->
+<div id="scholarships" class="panel">
+  <div class="page-title">Scholarship Finder</div>
+  <div class="page-sub">Curated scholarships for Indian and international students applying to Germany.</div>
+
+  <div style="background:#FEF3C7;border:1px solid #F59E0B;border-radius:10px;padding:14px 18px;margin-bottom:20px;display:flex;gap:12px;align-items:flex-start;">
+    <span style="font-size:1.2rem">⚠️</span>
+    <div>
+      <div style="font-size:0.82rem;font-weight:700;color:#92400E;margin-bottom:3px">Disclaimer — Always Verify Before Applying</div>
+      <div style="font-size:0.8rem;color:#78350F;line-height:1.5">Scholarship amounts, deadlines, and eligibility shown here are based on general knowledge and may be outdated. <strong>Always check the official scholarship website</strong> before applying. We are not affiliated with any of these organisations.</div>
+    </div>
+  </div>
+
+  <div class="filter-bar">
+    <div class="filter-chip active" onclick="filterScholarships('all', this)">All</div>
+    <div class="filter-chip" onclick="filterScholarships('daad', this)">DAAD</div>
+    <div class="filter-chip" onclick="filterScholarships('erasmus', this)">Erasmus+</div>
+    <div class="filter-chip" onclick="filterScholarships('university', this)">University</div>
+    <div class="filter-chip" onclick="filterScholarships('india', this)">India-specific</div>
+    <div class="filter-chip" onclick="filterScholarships('fullyFunded', this)">Fully Funded</div>
+  </div>
+
+  <div class="scholarship-grid" id="scholarship-grid"></div>
+</div>
+
+<!-- ===== LOR GENERATOR ===== -->
+<div id="lor" class="panel">
+  <div class="page-title">LOR Generator</div>
+  <div class="page-sub">Generate a professional Letter of Recommendation draft for your professor to review and sign.</div>
+
+  <div class="card">
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Your Full Name</label>
+        <input type="text" id="lor-student" placeholder="e.g. Maheshwari Saida">
+      </div>
+      <div class="form-group">
+        <label>Professor's Name</label>
+        <input type="text" id="lor-prof" placeholder="e.g. Dr. Ramesh Kumar">
+      </div>
+      <div class="form-group">
+        <label>Professor's Designation</label>
+        <input type="text" id="lor-designation" placeholder="e.g. Associate Professor, Dept. of CS">
+      </div>
+      <div class="form-group">
+        <label>Your University</label>
+        <input type="text" id="lor-uni" placeholder="e.g. JNTU Hyderabad">
+      </div>
+      <div class="form-group">
+        <label>Target Programme</label>
+        <input type="text" id="lor-programme" placeholder="e.g. MSc Web Engineering, TU Chemnitz">
+      </div>
+      <div class="form-group">
+        <label>Course/Subject You Took</label>
+        <input type="text" id="lor-course" placeholder="e.g. Data Structures and Algorithms">
+      </div>
+      <div class="form-group full">
+        <label>Your Key Achievement / Project (that professor knows about)</label>
+        <input type="text" id="lor-achievement" placeholder="e.g. Built fleet management system using IoT; scored 92% in the course">
+      </div>
+      <div class="form-group">
+        <label>Relationship Duration</label>
+        <input type="text" id="lor-duration" placeholder="e.g. 2 years">
+      </div>
+      <div class="form-group">
+        <label>LOR Tone</label>
+        <select id="lor-tone">
+          <option value="formal">Formal & Academic</option>
+          <option value="warm">Warm & Personal</option>
+          <option value="technical">Technical & Skills-focused</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn" onclick="generateLOR()">Generate LOR Draft →</button>
+  </div>
+
+  <div id="lor-output"></div>
+</div>
+
+<!-- ===== COST OF LIVING ===== -->
+<div id="cost" class="panel">
+  <div class="page-title">Cost of Living</div>
+  <div class="page-sub">Real monthly estimates for German university cities. Based on student averages — not tourist prices.</div>
+
+  <div class="filter-bar" style="margin-bottom:24px">
+    <div class="filter-chip active" onclick="filterCities('all', this)">All Cities</div>
+    <div class="filter-chip" onclick="filterCities('large', this)">Large Cities</div>
+    <div class="filter-chip" onclick="filterCities('medium', this)">Medium Cities</div>
+    <div class="filter-chip" onclick="filterCities('small', this)">Small Cities</div>
+  </div>
+
+  <div class="col-city-grid" id="col-grid"></div>
+</div>
+
+<!-- ===== SOP ANALYSER ===== -->
+<div id="sop" class="panel">
+  <div class="page-title">SOP Analyser</div>
+  <div class="page-sub">Get an honest score with specific fixes — not generic advice.</div>
+
+  <div class="card">
+    <div class="form-grid" style="margin-bottom:16px">
+      <div class="form-group">
+        <label>Target University</label>
+        <input type="text" id="sop-uni" placeholder="e.g. TU Chemnitz">
+      </div>
+      <div class="form-group">
+        <label>Target Programme</label>
+        <input type="text" id="sop-prog" placeholder="e.g. MSc Web Engineering">
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:18px">
+      <label>Your SOP Text</label>
+      <textarea id="sop-text" placeholder="Paste your Statement of Purpose here..."></textarea>
+    </div>
+    <button class="btn" onclick="analyseSOP()">Analyse My SOP →</button>
+  </div>
+
+  <div id="sop-results"></div>
+</div>
+
+<script>
+const API = "http://localhost:8000";
+
+// ===== TAB SWITCHING =====
+function switchTab(tab, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  const panel = document.getElementById(tab);
+  if (panel) panel.classList.add('active');
+  if (el) el.classList.add('active');
+  // Scroll tab into view on mobile
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+}
+
+// ===== PROFILE STRENGTH =====
+function updateStrength() {
+  let score = 0;
+  if (document.getElementById('cgpa').value) score += 25;
+  if (document.getElementById('field').value) score += 20;
+  if (document.getElementById('budget').value) score += 20;
+  if (document.getElementById('english').value) score += 20;
+  const exp = document.getElementById('work_exp').value;
+  if (exp === 'experienced') score += 15;
+  else if (exp === 'fulltime') score += 10;
+  else if (exp === 'internship') score += 5;
+
+  const fill = document.getElementById('strengthFill');
+  const pct = document.getElementById('strengthPct');
+  fill.style.width = score + '%';
+  pct.textContent = score + '%';
+
+  // Dynamic color based on score
+  if (score <= 30) {
+    fill.style.background = '#EF4444'; // Red
+    pct.style.color = '#EF4444';
+  } else if (score <= 70) {
+    fill.style.background = 'linear-gradient(90deg, #F59E0B, #FBBF24)'; // Amber
+    pct.style.color = '#F59E0B';
+  } else {
+    fill.style.background = 'linear-gradient(90deg, #10B981, #34D399)'; // Green
+    pct.style.color = '#10B981';
+  }
+}
+
+// ===== UNIVERSITY FINDER =====
+async function findUniversities() {
+  const cgpa = parseFloat(document.getElementById('cgpa').value);
+  const field = document.getElementById('field').value;
+  const budget = parseInt(document.getElementById('budget').value);
+  const city_pref = document.getElementById('city_pref').value;
+  const work_experience = document.getElementById('work_exp').value;
+
+  if (!cgpa || !field || !budget) {
+    alert('Please fill in CGPA, Field, and Budget.');
+    return;
+  }
+
+  const container = document.getElementById('finder-results');
+  container.innerHTML = `<div class="loading"><div class="spinner"></div><div>Matching against 40 universities...</div></div>`;
+
+  try {
+    const res = await fetch(`${API}/match`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ cgpa, field, budget_per_semester: budget, english_proof: 'ielts', city_preference: city_pref, work_experience })
+    });
+    const data = await res.json();
+    renderResults(data, container);
+  } catch(err) {
+    container.innerHTML = `<div class="empty-state">⚠️ Backend not running. Start it with: <code>uvicorn main:app --reload</code></div>`;
+  }
+}
+
+function jobHubDots(score) {
+  let html = '<div class="job-dots">';
+  for (let i = 1; i <= 10; i++) {
+    html += `<div class="job-dot ${i <= score ? 'filled' : ''}"></div>`;
+  }
+  return html + '</div>';
+}
+
+const jobHubScores = {
+  'Munich': 9, 'Berlin': 10, 'Hamburg': 9, 'Frankfurt': 9,
+  'Cologne': 8, 'Stuttgart': 8, 'Karlsruhe': 7, 'Darmstadt': 7,
+  'Aachen': 7, 'Dresden': 6, 'Hannover': 6, 'Bonn': 6,
+  'Heidelberg': 6, 'Mannheim': 6, 'Freiburg': 5, 'Augsburg': 5,
+  'Bielefeld': 5, 'Würzburg': 5, 'Passau': 4, 'Chemnitz': 4,
+  'Paderborn': 4, 'Göttingen': 4, 'Bremen': 6, 'Ulm': 5,
+  'Duisburg': 5, 'Magdeburg': 4, 'Koblenz': 4, 'Bayreuth': 3,
+  'Jena': 3, 'Cottbus': 3, 'Trier': 3, 'Saarbrücken': 5,
+  'Kaiserslautern': 4, 'Mittweida': 2, 'Furtwangen': 3
+};
+
+function isResearchUni(name) {
+  const fh = ['Hochschule', 'University of Applied Sciences', 'HAW', 'Frankfurt University of Applied Sciences', 'Hochschule Darmstadt', 'Hochschule Furtwangen', 'University of Applied Sciences Mittweida'];
+  return !fh.some(f => name.includes(f));
+}
+
+function renderResults(data, container) {
+  const { results, total } = data;
+  const safe = results.safe || [], moderate = results.moderate || [], reach = results.reach || [];
+  if (total === 0) { container.innerHTML = `<div class="empty-state">No matches found. Try increasing budget or adjusting filters.</div>`; return; }
+
+  let html = `<div class="results-summary">
+    <div class="summary-card"><div class="summary-number safe-color">${safe.length}</div><div class="summary-label">Safe Picks</div></div>
+    <div class="summary-card"><div class="summary-number moderate-color">${moderate.length}</div><div class="summary-label">Moderate</div></div>
+    <div class="summary-card"><div class="summary-number reach-color">${reach.length}</div><div class="summary-label">Reach</div></div>
+  </div>`;
+
+  if (safe.length) html += renderTier('safe', 'Safe Picks', safe);
+  if (moderate.length) html += renderTier('moderate', 'Moderate', moderate);
+  if (reach.length) html += renderTier('reach', 'Reach', reach);
+  container.innerHTML = html;
+}
+
+function renderTier(tier, label, unis) {
+  const cards = unis.map(u => {
+    const isTU = isResearchUni(u.university_name);
+    const jobScore = jobHubScores[u.city] || 4;
+    return `<div class="uni-card ${tier}">
+      <div class="uni-card-header">
+        <div class="uni-name">${u.university_name}</div>
+        <span class="uni-type-badge ${isTU ? 'tu-badge' : 'fh-badge'}">${isTU ? 'TU' : 'FH'}</span>
+      </div>
+      <div class="programme-name">${u.programme_name}</div>
+      <div class="job-hub">
+        <span class="job-hub-label">Job Hub:</span>
+        ${jobHubDots(jobScore)}
+        <span style="font-size:0.72rem;color:var(--text-dim)">${jobScore}/10</span>
+      </div>
+      <div class="uni-meta">
+        <div class="meta-item"><span class="meta-label">Min CGPA</span><span class="meta-value">${u.cgpa_minimum}/10</span></div>
+        <div class="meta-item"><span class="meta-label">City</span><span class="meta-value">${u.city}</span></div>
+        <div class="meta-item"><span class="meta-label">Fees/Sem</span><span class="meta-value">${u.fees_per_semester === 0 ? '🎉 Free' : '€' + u.fees_per_semester}</span></div>
+        <div class="meta-item"><span class="meta-label">Apply via</span><span class="meta-value">${u.application_via}</span></div>
+      </div>
+      <div class="uni-note">${u.notes}</div>
+      <div class="uni-card-footer">
+        <div class="deadline-badge">Winter: <strong>${u.deadline_winter || 'N/A'}</strong></div>
+        <a class="apply-link" href="${u.programme_url}" target="_blank">Programme page ↗</a>
+      </div>
+    </div>`;
+  }).join('');
+
+  return `<div class="tier-section">
+    <div class="tier-header">
+      <div class="tier-badge ${tier}">${label}</div>
+      <div class="tier-count">${unis.length} match${unis.length !== 1 ? 'es' : ''}</div>
+    </div>
+    <div class="uni-cards">${cards}</div>
+  </div>`;
+}
+
+// ===== ECTS MATCHER =====
+const ectsRequirements = {
+  math: { label: 'Mathematics', required: 25, description: 'Most German CS programmes require min 25 ECTS in Math' },
+  tcs: { label: 'Theoretical CS', required: 15, description: 'Logic, automata, complexity theory' },
+  prog: { label: 'Programming', required: 20, description: 'Any programming language coursework' },
+  algo: { label: 'Algorithms', required: 10, description: 'Data structures and algorithms' },
+  db: { label: 'Databases', required: 8, description: 'Database design and SQL' }
+};
+
+function matchECTS() {
+  const system = document.getElementById('ects-system').value;
+  const multiplier = system === 'us' ? 1.5 : 1;
+
+  const values = {
+    math: parseFloat(document.getElementById('ects-math').value) * multiplier || 0,
+    tcs: parseFloat(document.getElementById('ects-tcs').value) * multiplier || 0,
+    prog: parseFloat(document.getElementById('ects-prog').value) * multiplier || 0,
+    algo: parseFloat(document.getElementById('ects-algo').value) * multiplier || 0,
+    db: parseFloat(document.getElementById('ects-db').value) * multiplier || 0,
+  };
+
+  let html = '<div class="ects-result">';
+  for (const [key, req] of Object.entries(ectsRequirements)) {
+    const yours = values[key];
+    const pct = Math.min(100, (yours / req.required) * 100);
+    let status, barClass;
+    if (yours >= req.required) { status = '✅ Meets requirement'; barClass = 'ok'; }
+    else if (yours >= req.required * 0.7) { status = '⚠️ Borderline — may need bridge course'; barClass = 'warn'; }
+    else { status = '❌ Below requirement — likely rejected'; barClass = 'fail'; }
+
+    html += `<div class="ects-card">
+      <div class="ects-subject">${req.label}</div>
+      <div class="ects-bar-wrap"><div class="ects-bar ${barClass}" style="width:${pct}%"></div></div>
+      <div class="ects-verdict ${barClass.replace('ok','ok').replace('warn','warn').replace('fail','fail')}">${status}</div>
+      <div class="ects-numbers">You: <strong>${yours.toFixed(0)} ECTS</strong> · Required: ${req.required} ECTS</div>
+    </div>`;
+  }
+  html += '</div>';
+
+  // Overall verdict
+  const failed = Object.entries(ectsRequirements).filter(([k, r]) => values[k] < r.required * 0.7);
+  const borderline = Object.entries(ectsRequirements).filter(([k, r]) => values[k] >= r.required * 0.7 && values[k] < r.required);
+  let verdict = '';
+  if (failed.length === 0 && borderline.length === 0) {
+    verdict = `<div class="card" style="margin-top:20px;border-left:4px solid var(--emerald)"><strong style="color:var(--emerald)">✅ Strong Profile</strong> — Your credits meet all standard German CS programme requirements. You are unlikely to face academic rejections due to prerequisites.</div>`;
+  } else if (failed.length > 0) {
+    verdict = `<div class="card" style="margin-top:20px;border-left:4px solid var(--reach)"><strong style="color:var(--reach)">⚠️ Action Required</strong> — You are below the minimum in: <strong>${failed.map(([k]) => ectsRequirements[k].label).join(', ')}</strong>. Consider enrolling in bridge courses or selecting FH universities which are more flexible on prerequisites.</div>`;
+  } else {
+    verdict = `<div class="card" style="margin-top:20px;border-left:4px solid var(--amber)"><strong style="color:var(--amber-dim)">⚠️ Borderline</strong> — Your credits are close but not fully there for: <strong>${borderline.map(([k]) => ectsRequirements[k].label).join(', ')}</strong>. Add a strong SOP explaining additional coursework or projects in these areas.</div>`;
+  }
+
+  document.getElementById('ects-results').innerHTML = html + verdict;
+}
+
+// ===== SCHOLARSHIPS =====
+const scholarships = [
+  {
+    name: "DAAD Scholarship for Development-Related Postgraduate Courses",
+    org: "DAAD (German Academic Exchange Service)",
+    amount: "€934/month + benefits",
+    desc: "Full funding for postgraduate students from developing countries including India. Covers tuition, living costs, travel, and health insurance.",
+    tags: ["Fully Funded", "India", "Masters"],
+    deadline: "15 August annually",
+    url: "https://www2.daad.de/deutschland/stipendium/datenbank/en/21148-scholarship-database/",
+    category: ["daad", "india", "fullyFunded"]
+  },
+  {
+    name: "DAAD Research Grants — Short-Term",
+    org: "DAAD",
+    amount: "€1,200–1,500/month",
+    desc: "For students who want to carry out research in Germany for 1–6 months. Ideal for thesis research or collaborative projects.",
+    tags: ["Research", "Short-Term", "All Countries"],
+    deadline: "1 November annually",
+    url: "https://www2.daad.de/deutschland/stipendium/datenbank/en/21148-scholarship-database/",
+    category: ["daad", "fullyFunded"]
+  },
+  {
+    name: "Erasmus+ Scholarship",
+    org: "European Commission",
+    amount: "€800–1,200/month",
+    desc: "Study exchange scholarship for students at EU partner universities. Check if your home university has an Erasmus agreement with German institutions.",
+    tags: ["Exchange", "EU Partner", "Masters"],
+    deadline: "Varies by university",
+    url: "https://erasmus-plus.ec.europa.eu/",
+    category: ["erasmus", "fullyFunded"]
+  },
+  {
+    name: "Deutschlandstipendium",
+    org: "German Federal Government + University",
+    amount: "€300/month",
+    desc: "Merit-based scholarship funded 50% by the government, 50% by private sponsors. Available at most German universities for outstanding students.",
+    tags: ["Merit-based", "All Fields", "Any Nationality"],
+    deadline: "Varies by university (usually April–June)",
+    url: "https://www.deutschlandstipendium.de/en/",
+    category: ["university"]
+  },
+  {
+    name: "Heinrich Böll Foundation Scholarship",
+    org: "Heinrich Böll Foundation",
+    amount: "€861/month + €300 book allowance",
+    desc: "For students committed to ecology, democracy, and human rights. Highly competitive but open to international students.",
+    tags: ["Political", "Ecology", "International"],
+    deadline: "1 March & 1 September",
+    url: "https://www.boell.de/en/scholarships",
+    category: ["university", "fullyFunded"]
+  },
+  {
+    name: "Konrad Adenauer Foundation Scholarship",
+    org: "Konrad Adenauer Foundation",
+    amount: "€861/month + allowances",
+    desc: "For students with Christian Democratic values and social engagement. Open to international students with above-average academic performance.",
+    tags: ["Merit", "Leadership", "International"],
+    deadline: "15 January & 15 July",
+    url: "https://www.kas.de/en/web/begabtenfoerderung-und-kultur/scholarships",
+    category: ["university", "fullyFunded"]
+  },
+  {
+    name: "TU Munich Excellence Scholarship",
+    org: "Technical University of Munich",
+    amount: "Up to €1,500/month",
+    desc: "TUM's own scholarship for top international students admitted to Masters programmes. Highly competitive — requires GPA in top 5% of cohort.",
+    tags: ["TUM", "Excellence", "Top Students"],
+    deadline: "15 May",
+    url: "https://www.tum.de/en/studies/fees-and-financial-aid/scholarships",
+    category: ["university"]
+  },
+  {
+    name: "IIIT/NIT/IIT Alumni Germany Scholarships",
+    org: "Various Indian Alumni Networks in Germany",
+    amount: "€500–1,000 one-time",
+    desc: "Several alumni networks in Germany offer small grants for incoming Indian students. Check your college alumni network for Germany chapters.",
+    tags: ["India", "Alumni", "One-Time"],
+    deadline: "Rolling",
+    url: "https://daad.de",
+    category: ["india"]
+  }
+];
+
+function filterScholarships(cat, el) {
+  document.querySelectorAll('.filter-bar .filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderScholarships(cat);
+}
+
+function renderScholarships(filter = 'all') {
+  const filtered = filter === 'all' ? scholarships : scholarships.filter(s => s.category.includes(filter));
+  document.getElementById('scholarship-grid').innerHTML = filtered.map(s => `
+    <div class="scholarship-card">
+      <div class="sch-header">
+        <div class="sch-name">${s.name}</div>
+        <div class="sch-amount">${s.amount}</div>
+      </div>
+      <div class="sch-org">${s.org}</div>
+      <div class="sch-desc">${s.desc}</div>
+      <div class="sch-tags">${s.tags.map(t => `<span class="sch-tag">${t}</span>`).join('')}</div>
+      <div class="sch-deadline">Deadline: <strong>${s.deadline}</strong>
+        <a class="sch-link" href="${s.url}" target="_blank">Apply ↗</a>
+      </div>
+    </div>
+  `).join('');
+}
+
+renderScholarships();
+
+// ===== LOR GENERATOR =====
+function generateLOR() {
+  const student = document.getElementById('lor-student').value || '[Student Name]';
+  const prof = document.getElementById('lor-prof').value || '[Professor Name]';
+  const designation = document.getElementById('lor-designation').value || '[Designation]';
+  const uni = document.getElementById('lor-uni').value || '[University]';
+  const programme = document.getElementById('lor-programme').value || '[Programme]';
+  const course = document.getElementById('lor-course').value || '[Course Name]';
+  const achievement = document.getElementById('lor-achievement').value || '[Achievement]';
+  const duration = document.getElementById('lor-duration').value || '[Duration]';
+  const tone = document.getElementById('lor-tone').value;
+
+  const date = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+
+  let lor = '';
+
+  if (tone === 'formal') {
+    lor = `${date}
+
+To the Admissions Committee,
+${programme}
+
+Subject: Letter of Recommendation for ${student}
+
+Dear Members of the Admissions Committee,
+
+It is my privilege to recommend ${student} for admission to the ${programme}. I have had the opportunity to observe ${student}'s academic development over ${duration} in my capacity as ${designation} at ${uni}.
+
+During the course of ${course}, ${student} demonstrated a consistently high level of academic rigor and analytical capability. ${achievement}. This achievement reflects not only technical competence but also the ability to apply theoretical knowledge to practical, real-world challenges — a quality that I believe is essential for graduate-level research.
+
+What distinguishes ${student} from peers is an exceptional combination of intellectual curiosity, self-directed learning, and the ability to work effectively both independently and within collaborative settings. I have observed ${student} approach complex problems with methodical precision, and consistently deliver solutions that exceed expectations.
+
+I am confident that ${student} possesses the academic foundation, technical skills, and personal discipline required to excel in the ${programme}. I recommend ${student} to your programme without reservation and am available to provide additional information upon request.
+
+Yours sincerely,
+
+${prof}
+${designation}
+${uni}`;
+
+  } else if (tone === 'warm') {
+    lor = `${date}
+
+To the Admissions Committee,
+${programme}
+
+Dear Committee Members,
+
+I am writing to enthusiastically recommend ${student}, whom I have had the genuine pleasure of teaching and mentoring over the past ${duration}. In my experience as ${designation} at ${uni}, I encounter many talented students — but ${student} stands out as one of the most motivated and capable individuals I have taught.
+
+In my course on ${course}, ${student} showed remarkable dedication. ${achievement}. What impressed me most was not just the outcome, but the process — the willingness to go beyond the syllabus, ask deeper questions, and take ownership of the learning journey.
+
+I have watched ${student} grow tremendously during this time — both academically and as a person. There is a quiet determination and genuine passion for the field that is rare and refreshing. I believe ${student} will bring this same energy and commitment to the ${programme}.
+
+It is with great enthusiasm and full confidence that I recommend ${student} for this programme. Please feel free to contact me directly if you would like to discuss this recommendation further.
+
+With warm regards,
+
+${prof}
+${designation}
+${uni}`;
+
+  } else {
+    lor = `${date}
+
+To the Admissions Committee,
+${programme}
+
+Subject: Technical Recommendation for ${student}
+
+Dear Committee,
+
+I am pleased to provide this letter of recommendation for ${student}, who studied under my supervision for ${duration} at ${uni}. My assessment is based on direct observation of ${student}'s technical capabilities during ${course} and associated project work.
+
+${student} demonstrated proficiency in the following areas relevant to the ${programme}: applied algorithmic thinking, systematic problem decomposition, and hands-on implementation skills. Specifically, ${achievement}. This project required ${student} to independently research relevant technologies, design the system architecture, and deliver a working solution — all skills directly applicable to graduate-level study in Germany.
+
+From a technical standpoint, ${student} consistently scored in the top percentile of the class, exhibited strong debugging methodology, and showed the ability to learn new frameworks and tools rapidly. These capabilities are, in my assessment, indicative of a student who will succeed at advanced technical coursework.
+
+I recommend ${student} for the ${programme} with confidence in their technical readiness and capacity for independent research.
+
+Regards,
+
+${prof}
+${designation}
+${uni}`;
+  }
+
+  document.getElementById('lor-output').innerHTML = `
+    <div class="lor-output" id="lor-text">${lor}</div>
+    <button class="copy-btn" onclick="copyLOR()">📋 Copy to Clipboard</button>
+  `;
+}
+
+function copyLOR() {
+  const text = document.getElementById('lor-text').innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = '✅ Copied!';
+    setTimeout(() => btn.textContent = '📋 Copy to Clipboard', 2000);
+  });
+}
+
+// ===== COST OF LIVING =====
+const cityData = [
+  { city: 'Munich', state: 'Bavaria', size: 'large', rent: 800, food: 250, transport: 57, utilities: 80, misc: 100 },
+  { city: 'Berlin', state: 'Berlin', size: 'large', rent: 700, food: 220, transport: 86, utilities: 70, misc: 90 },
+  { city: 'Hamburg', state: 'Hamburg', size: 'large', rent: 720, food: 230, transport: 105, utilities: 75, misc: 90 },
+  { city: 'Frankfurt', state: 'Hesse', size: 'large', rent: 750, food: 240, transport: 115, utilities: 78, misc: 95 },
+  { city: 'Cologne', state: 'NRW', size: 'large', rent: 650, food: 220, transport: 103, utilities: 70, misc: 85 },
+  { city: 'Stuttgart', state: 'Baden-Württemberg', size: 'large', rent: 700, food: 230, transport: 102, utilities: 75, misc: 88 },
+  { city: 'Aachen', state: 'NRW', size: 'medium', rent: 500, food: 200, transport: 62, utilities: 65, misc: 75 },
+  { city: 'Dresden', state: 'Saxony', size: 'medium', rent: 420, food: 190, transport: 68, utilities: 60, misc: 70 },
+  { city: 'Freiburg', state: 'Baden-Württemberg', size: 'medium', rent: 560, food: 210, transport: 57, utilities: 65, misc: 78 },
+  { city: 'Heidelberg', state: 'Baden-Württemberg', size: 'medium', rent: 580, food: 215, transport: 50, utilities: 65, misc: 75 },
+  { city: 'Mannheim', state: 'Baden-Württemberg', size: 'medium', rent: 520, food: 200, transport: 80, utilities: 62, misc: 72 },
+  { city: 'Darmstadt', state: 'Hesse', size: 'medium', rent: 580, food: 210, transport: 70, utilities: 68, misc: 78 },
+  { city: 'Hannover', state: 'Lower Saxony', size: 'medium', rent: 500, food: 200, transport: 85, utilities: 63, misc: 72 },
+  { city: 'Bonn', state: 'NRW', size: 'medium', rent: 540, food: 205, transport: 75, utilities: 65, misc: 75 },
+  { city: 'Chemnitz', state: 'Saxony', size: 'small', rent: 300, food: 180, transport: 45, utilities: 55, misc: 60 },
+  { city: 'Passau', state: 'Bavaria', size: 'small', rent: 380, food: 185, transport: 40, utilities: 55, misc: 60 },
+  { city: 'Saarbrücken', state: 'Saarland', size: 'small', rent: 380, food: 185, transport: 60, utilities: 58, misc: 62 },
+  { city: 'Cottbus', state: 'Brandenburg', size: 'small', rent: 280, food: 175, transport: 42, utilities: 52, misc: 55 },
+  { city: 'Magdeburg', state: 'Saxony-Anhalt', size: 'small', rent: 320, food: 178, transport: 55, utilities: 54, misc: 58 },
+  { city: 'Kaiserslautern', state: 'Rhineland-Palatinate', size: 'small', rent: 360, food: 182, transport: 50, utilities: 56, misc: 60 },
+];
+
+function filterCities(size, el) {
+  document.querySelectorAll('.filter-bar .filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderCities(size);
+}
+
+function renderCities(filter = 'all') {
+  const filtered = filter === 'all' ? cityData : cityData.filter(c => c.size === filter);
+  document.getElementById('col-grid').innerHTML = filtered.map(c => {
+    const total = c.rent + c.food + c.transport + c.utilities + c.misc;
+    return `<div class="col-city-card">
+      <div class="col-city-header">
+        <div class="col-city-name">${c.city}</div>
+        <div class="col-city-state">${c.state}</div>
+      </div>
+      <div class="col-items">
+        <div class="col-item"><span class="col-item-label">🏠 Rent (student room)</span><span class="col-item-value">€${c.rent}</span></div>
+        <div class="col-item"><span class="col-item-label">🍽️ Food & groceries</span><span class="col-item-value">€${c.food}</span></div>
+        <div class="col-item"><span class="col-item-label">🚌 Transport (semester ticket)</span><span class="col-item-value">€${c.transport}</span></div>
+        <div class="col-item"><span class="col-item-label">⚡ Utilities & internet</span><span class="col-item-value">€${c.utilities}</span></div>
+        <div class="col-item"><span class="col-item-label">🎮 Misc / leisure</span><span class="col-item-value">€${c.misc}</span></div>
+      </div>
+      <div class="col-total">
+        <span class="col-total-label">Total / Month</span>
+        <span class="col-total-value">€${total}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+renderCities();
+
+// ===== SOP ANALYSER (13 Checks) =====
+const GENERIC_PHRASES = [
+  ["knowledge is power", "Replace with a specific insight or experience that shaped you"],
+  ["since childhood", "Too vague. Mention a specific age or event instead"],
+  ["i have always been passionate", "Show the passion through a story, not a claim"],
+  ["in today's world", "Generic opener. Start with your specific experience"],
+  ["i am a hardworking person", "Show it with an example, don't claim it"],
+  ["i am a quick learner", "Prove it with a concrete learning experience"],
+  ["to pursue my dreams", "What specific dream? Be precise about your goal"],
+  ["this prestigious university", "Name the university and cite a specific module/professor"],
+  ["world-class university", "Name what specifically attracts you to this programme"],
+  ["needless to say", "Delete this. Just state the fact directly"],
+  ["it goes without saying", "Delete this filler phrase entirely"],
+  ["i am very interested", "Show interest through specifics, not adjectives"],
+];
+
+// Check 8: Credit alignment keywords per field
+const FIELD_KEYWORDS = {
+  'data science': ['linear algebra','statistics','calculus','algorithms','probability','regression','machine learning','mathematics','python','r programming','data analysis','sql'],
+  'computer science': ['algorithms','data structures','operating systems','networks','software engineering','programming','mathematics','complexity','databases','systems'],
+  'web engineering': ['html','css','javascript','rest','api','database','software','cloud','distributed','web services','backend','frontend','http'],
+  'information technology': ['networking','systems','security','cloud','infrastructure','devops','linux','databases','software','it management'],
+  'artificial intelligence': ['machine learning','neural networks','deep learning','nlp','computer vision','mathematics','statistics','python','algorithms','optimization'],
+};
+
+// Check 12: AI hallmark words
+const AI_WORDS = ['delve','multifaceted','testament','vibrant','underscored','embark','tapestry','nuanced','pivotal','realm','beacon','foster','intricate','culmination','synergy','leverage','robust','seamlessly','groundbreaking','revolutionize','navigate','elevate','resonate','paramount','holistic'];
+
+// Check 13: Impact/result keywords
+const IMPACT_WORDS = ['achieved','led to','improved','optimized','resulted in','reduced','increased','delivered','built','developed','launched','saved','accelerated','enabled','generated'];
+const ACTION_ONLY = ['did','made','worked on','helped with','assisted','participated','was involved'];
+
+async function analyseSOP() {
+  const sop_text = document.getElementById('sop-text').value.trim();
+  const target_university = document.getElementById('sop-uni').value.trim();
+  const target_programme = document.getElementById('sop-prog').value.trim();
+
+  if (!sop_text || sop_text.length < 50) { alert('Please paste your SOP first.'); return; }
+
+  const container = document.getElementById('sop-results');
+  container.innerHTML = `<div class="loading" style="margin-top:24px"><div class="spinner"></div><div>Running 13-point analysis...</div></div>`;
+
+  setTimeout(() => {
+    const result = analyseSOPLocally(sop_text, target_university, target_programme);
+    renderSOP(result, container);
+  }, 600);
+}
+
+function analyseSOPLocally(text, targetUni, targetProg) {
+  const words = text.split(/\s+/);
+  const wordCount = words.length;
+  const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 5);
+  let score = 100;
+  const flags = [], positives = [];
+  const textLower = text.toLowerCase();
+
+  // Radar scores (0-100 each)
+  let technicalDepth = 100, researchFit = 100, structure = 100;
+
+  // ---- CHECK 1: Word Count ----
+  if (wordCount < 400) {
+    score -= 20; structure -= 25;
+    flags.push({ type: 'length', icon: '📏', label: 'Too Short', found: `${wordCount} words`, suggestion: 'Aim for 800–1000 words. German universities expect a detailed, well-structured SOP.' });
+  } else if (wordCount > 1200) {
+    score -= 10; structure -= 10;
+    flags.push({ type: 'length', icon: '📏', label: 'Too Long', found: `${wordCount} words`, suggestion: 'Trim to under 1000 words. Admissions officers skip long SOPs.' });
+  } else {
+    positives.push(`Good length: ${wordCount} words`);
+  }
+
+  // ---- CHECK 2: Quantification ----
+  const numbers = text.match(/\b\d+(\.\d+)?[%+]?\b/g) || [];
+  if (numbers.length < 2) {
+    score -= 15; technicalDepth -= 20;
+    flags.push({ type: 'quantification', icon: '🔢', label: 'No Numbers', found: `Only ${numbers.length} numbers found`, suggestion: 'Add: CGPA (e.g. 8.06/10), accuracy % (e.g. 88%), team size, lines of code, time saved.' });
+  } else {
+    positives.push(`${numbers.length} quantified achievements found`);
+  }
+
+  // ---- CHECK 3: Generic Phrases ----
+  let genericCount = 0;
+  for (const [phrase, suggestion] of GENERIC_PHRASES) {
+    if (textLower.includes(phrase)) {
+      score -= 7; genericCount++; structure -= 8;
+      flags.push({ type: 'generic_phrase', icon: '⚠️', label: 'Generic Phrase', found: `"${phrase}"`, suggestion });
+    }
+  }
+  if (genericCount === 0) positives.push('No generic filler phrases detected');
+
+  // ---- CHECK 4: University Name ----
+  if (targetUni) {
+    const uniShort = targetUni.split(' ').pop().toLowerCase();
+    if (!textLower.includes(targetUni.toLowerCase()) && !textLower.includes(uniShort)) {
+      score -= 15; researchFit -= 30;
+      flags.push({ type: 'specificity', icon: '🏛️', label: 'University Not Named', found: `"${targetUni}" not found in SOP`, suggestion: `Name ${targetUni} explicitly. Cite 1–2 specific modules, professors, or research labs.` });
+    } else {
+      positives.push(`${targetUni} mentioned`);
+    }
+  }
+
+  // ---- CHECK 5: Career Goals ----
+  const goalWords = ['goal', 'aim', 'aspire', 'plan to', 'career', 'future', 'become', 'intend'];
+  if (!goalWords.some(w => textLower.includes(w))) {
+    score -= 10; structure -= 15;
+    flags.push({ type: 'goals', icon: '🎯', label: 'No Career Goals', found: 'Missing future career direction', suggestion: 'Add: "In 5 years, I aim to work as [role] at [type of company], solving [specific problem]."' });
+  } else {
+    positives.push('Career goals present');
+  }
+
+  // ---- CHECK 6: Opening Hook ----
+  const firstSentence = sentences[0] || '';
+  const badOpeners = ['i am writing', 'i wish to', 'my name is', 'i was born', 'i want to apply'];
+  if (badOpeners.some(o => firstSentence.toLowerCase().includes(o))) {
+    score -= 8; structure -= 12;
+    flags.push({ type: 'opening', icon: '🚪', label: 'Weak Opening', found: `"${firstSentence.substring(0, 70)}..."`, suggestion: 'Open with a real story, a specific moment, or a problem you encountered — not "I am writing to apply."' });
+  } else {
+    positives.push('Strong, non-generic opening');
+  }
+
+  // ---- CHECK 7: Word Repetition ----
+  const wordFreq = {};
+  words.forEach(w => { const c = w.toLowerCase().replace(/[^a-z]/g,''); if (c.length > 5) wordFreq[c] = (wordFreq[c]||0)+1; });
+  const repeated = Object.entries(wordFreq).filter(([w,c]) => c >= 6 && !['university','programme','research','germany','student'].includes(w));
+  if (repeated.length > 0) {
+    score -= 5; structure -= 8;
+    repeated.slice(0,2).forEach(([w,c]) => flags.push({ type: 'repetition', icon: '🔁', label: 'Word Repetition', found: `"${w}" used ${c} times`, suggestion: `Replace some uses of "${w}" with synonyms to improve flow.` }));
+  } else {
+    positives.push('Good vocabulary variety');
+  }
+
+  // ---- CHECK 8: Credit / Field Keyword Alignment ----
+  const progLower = (targetProg || '').toLowerCase();
+  let matchedField = null;
+  for (const [field, keywords] of Object.entries(FIELD_KEYWORDS)) {
+    if (progLower.includes(field) || field.split(' ').some(w => progLower.includes(w))) {
+      matchedField = { field, keywords }; break;
+    }
+  }
+  if (matchedField) {
+    const foundKw = matchedField.keywords.filter(k => textLower.includes(k));
+    const missing = matchedField.keywords.filter(k => !textLower.includes(k)).slice(0,4);
+    if (foundKw.length < 3) {
+      score -= 20; technicalDepth -= 30;
+      flags.push({ type: 'credit_alignment', icon: '📚', label: 'Missing Subject Keywords', found: `Only ${foundKw.length} of ${matchedField.keywords.length} core ${matchedField.field} keywords found`, suggestion: `Add references to: ${missing.join(', ')}. German universities want to see subject depth, not just project names.` });
+    } else {
+      positives.push(`Good subject keyword coverage (${foundKw.length} ${matchedField.field} terms found)`);
+      technicalDepth += 10;
+    }
+  }
+
+  // ---- CHECK 9: Passive Voice ----
+  const passiveMarkers = ['was given','was told','was assigned','was asked','was selected','was chosen','was made','was sent','was placed','was hired','was taught'];
+  const passiveFound = passiveMarkers.filter(p => textLower.includes(p));
+  if (passiveFound.length >= 3) {
+    score -= 10; structure -= 15;
+    flags.push({ type: 'passive', icon: '💤', label: 'Too Much Passive Voice', found: `${passiveFound.length} passive constructions found (e.g. "${passiveFound[0]}")`, suggestion: 'Replace with active voice: "I was assigned a project" → "I led a project." Active voice sounds like a leader.' });
+  } else {
+    positives.push('Mostly active voice — reads like a leader');
+  }
+
+  // ---- CHECK 10: Specificity (Professor / Module / Lab) ----
+  const specificityMarkers = ['prof.','professor','dr.','module','curriculum','lab','laboratory','research group','seminar','thesis','dissertation'];
+  const specificFound = specificityMarkers.filter(m => textLower.includes(m));
+  if (specificFound.length < 2) {
+    score -= 15; researchFit -= 25;
+    flags.push({ type: 'specificity2', icon: '🔬', label: 'Low Specificity', found: `Only ${specificFound.length} specific university references (Prof/Module/Lab)`, suggestion: 'Mention at least 1 professor by name and 1 specific module/lab. E.g. "Prof. Schmidt\'s work on distributed systems directly aligns with my project on..."' });
+  } else {
+    positives.push(`${specificFound.length} specific university references found`);
+    researchFit += 10;
+  }
+
+  // ---- CHECK 11: "I" Counter — Sentence Variety ----
+  const iStarters = sentences.filter(s => s.trim().toLowerCase().startsWith('i ') || s.trim().toLowerCase().startsWith('my '));
+  const iRatio = sentences.length > 0 ? iStarters.length / sentences.length : 0;
+  if (iRatio > 0.6) {
+    score -= 10; structure -= 15;
+    flags.push({ type: 'i_counter', icon: '🔄', label: 'Repetitive Sentence Structure', found: `${Math.round(iRatio*100)}% of sentences start with "I" or "My"`, suggestion: 'Vary your sentence starters. Try: "During my internship...", "At [Company]...", "This experience led me to...", "Building on this..."' });
+  } else {
+    positives.push('Good sentence structure variety');
+  }
+
+  // ---- CHECK 12: AI Likelihood ----
+  const aiFound = AI_WORDS.filter(w => textLower.includes(w));
+  if (aiFound.length >= 4) {
+    score -= 20; structure -= 20;
+    flags.push({ type: 'ai_detected', icon: '🤖', label: 'High AI-Likelihood', found: `${aiFound.length} GPT-style words detected: "${aiFound.slice(0,4).join('", "')}"`, suggestion: 'Rewrite flagged sections in your own voice. Replace: "delve" → "explore", "multifaceted" → "complex", "embark" → "begin". Universities are actively rejecting AI-generated SOPs.' });
+  } else if (aiFound.length >= 2) {
+    score -= 8;
+    flags.push({ type: 'ai_detected', icon: '🤖', label: 'Possible AI Phrases', found: `${aiFound.length} potential GPT words: "${aiFound.join('", "')}"`, suggestion: 'Replace these with natural language to avoid AI detectors.' });
+  } else {
+    positives.push('Low AI-likelihood — reads naturally');
+  }
+
+  // ---- CHECK 13: Impact Keywords ----
+  const impactFound = IMPACT_WORDS.filter(w => textLower.includes(w));
+  const actionOnlyFound = ACTION_ONLY.filter(w => textLower.includes(w));
+  if (impactFound.length === 0 && actionOnlyFound.length > 0) {
+    score -= 12; technicalDepth -= 15;
+    flags.push({ type: 'impact', icon: '💥', label: 'No Impact Language', found: `Found "${actionOnlyFound[0]}" but no result keywords`, suggestion: 'Every project needs a result. Change: "I built a chatbot" → "I built a chatbot that reduced query time by 40%." Use: achieved, improved, reduced, led to, resulted in.' });
+  } else if (impactFound.length > 0) {
+    positives.push(`${impactFound.length} impact/result keywords found`);
+    technicalDepth += 10;
+  }
+
+  // ---- RADAR SCORES (clamp 0-100) ----
+  technicalDepth = Math.max(0, Math.min(100, technicalDepth));
+  researchFit = Math.max(0, Math.min(100, researchFit));
+  structure = Math.max(0, Math.min(100, structure));
+
+  score = Math.max(0, Math.min(100, score));
+  const tier = score >= 80 ? 'Strong' : score >= 60 ? 'Competitive' : 'Needs Work';
+  const tier_color = score >= 80 ? 'green' : score >= 60 ? 'orange' : 'red';
+
+  return { score, tier, tier_color, word_count: wordCount, flags, positives, top_priorities: flags.slice(0,3).map(f => f.suggestion), radar: { technicalDepth, researchFit, structure } };
+}
+
+function radarLevel(val) {
+  if (val >= 75) return { label: 'High', color: '#10B981' };
+  if (val >= 45) return { label: 'Medium', color: '#F59E0B' };
+  return { label: 'Low', color: '#EF4444' };
+}
+
+function renderSOP(data, container) {
+  const colorClass = `score-${data.tier_color}`;
+  const positives = data.positives.map(p => `<span class="positive-tag">✓ ${p}</span>`).join('');
+
+  // Radar
+  const r = data.radar;
+  const rd = radarLevel(r.technicalDepth), rr = radarLevel(r.researchFit), rs = radarLevel(r.structure);
+  const radarHTML = `
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px;">
+      <div style="font-family:'Lora',serif;font-size:1rem;color:var(--navy);margin-bottom:16px;">📡 Readiness Radar</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
+        ${[
+          { label: 'Technical Depth', val: r.technicalDepth, lvl: rd, desc: 'Subject keywords, numbers, impact' },
+          { label: 'Research Fit', val: r.researchFit, lvl: rr, desc: 'University, professor, module mentions' },
+          { label: 'Structure', val: r.structure, lvl: rs, desc: 'Length, flow, sentence variety' }
+        ].map(item => `
+          <div style="text-align:center;">
+            <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-dim);margin-bottom:10px;">${item.label}</div>
+            <div style="position:relative;width:72px;height:72px;margin:0 auto 10px;">
+              <svg viewBox="0 0 36 36" width="72" height="72">
+                <path d="M18 2 a16 16 0 1 1 0 32 a16 16 0 1 1 0 -32" fill="none" stroke="#E2E8F0" stroke-width="3.5"/>
+                <path d="M18 2 a16 16 0 1 1 0 32 a16 16 0 1 1 0 -32" fill="none" stroke="${item.lvl.color}" stroke-width="3.5"
+                  stroke-dasharray="${item.val},100" stroke-linecap="round"/>
+              </svg>
+              <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:0.85rem;font-weight:700;color:${item.lvl.color}">${item.val}%</div>
+            </div>
+            <div style="font-size:0.82rem;font-weight:700;color:${item.lvl.color}">${item.lvl.label}</div>
+            <div style="font-size:0.72rem;color:var(--text-light);margin-top:3px;">${item.desc}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>`;
+
+  // Flags
+  const flagIcons = { generic_phrase:'⚠️', repetition:'🔁', specificity:'🏛️', specificity2:'🔬', passive:'💤', i_counter:'🔄', ai_detected:'🤖', impact:'💥', credit_alignment:'📚', length:'📏', quantification:'🔢', goals:'🎯', opening:'🚪' };
+  const flags = data.flags.map(f => `
+    <div class="flag-item ${f.type}" style="margin-bottom:10px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+        <span>${f.icon || flagIcons[f.type] || '🔍'}</span>
+        <span style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;color:var(--text-dim)">${f.label || f.type}</span>
+      </div>
+      <div class="flag-found">${f.found}</div>
+      <div class="flag-suggestion">${f.suggestion}</div>
+    </div>`).join('');
+
+  const priorities = data.top_priorities.map((p, i) => `
+    <div class="priority-item"><div class="priority-num">${i+1}</div><div class="priority-text">${p}</div></div>`).join('');
+
+  container.innerHTML = `<div style="margin-top:24px">
+    <div class="sop-score-card">
+      <div class="score-circle ${colorClass}">
+        <div class="score-number">${data.score}</div>
+        <div class="score-max">/100</div>
+      </div>
+      <div class="score-meta">
+        <h3>${data.tier} SOP</h3>
+        <p>${data.word_count} words · ${data.flags.length} issues found · ${data.positives.length} strengths</p>
+        <div class="score-positives">${positives}</div>
+      </div>
+    </div>
+
+    ${radarHTML}
+
+    ${data.top_priorities.length ? `<div class="priorities-section" style="margin-bottom:20px"><div class="priorities-title">🎯 Top 3 Priorities to Fix First</div>${priorities}</div>` : ''}
+
+    ${data.flags.length ? `
+      <div>
+        <div class="flags-title" style="margin-bottom:12px">All Issues Found (${data.flags.length})</div>
+        ${flags}
+      </div>` : '<div style="color:var(--safe);font-weight:600;padding:16px 0;">✅ No issues found — excellent SOP!</div>'}
+  </div>`;
+}
+</script>
+</body>
+</html>
